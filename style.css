@@ -1,0 +1,97 @@
+body {
+	margin: 0 auto;
+	font-family: 'Open Sans', sans-serif;
+	text-align: center;
+}
+
+section article {
+	margin: 0 auto;
+}
+
+table, .ld {
+	font-size: 1.5em;
+	margin: auto;
+}
+
+table td {
+	padding-right: 1em;
+}
+
+.banner-image {
+	position: absolute;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-size: cover !important;
+	display: block;
+	background: url("pexels-photo-235615.jpg");
+	background-position: center; 
+}
+
+.banner-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(120deg,rgba(166,0,217,.6),rgba(0,196,255,.2)) !important;
+}
+
+.feature-a {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+	top: 0;
+}
+
+.feature-a-header {
+	border-bottom: .3vw solid;
+	text-align: center;
+	width: 76.47%;
+	position: relative;
+    top: 50%;
+    left: 50%;
+	margin: -13% 0 0 -38.235%;
+	color: white;
+}
+
+/*github icon*/
+.feature-a-header i {
+	font-size: 4vw;
+	color: white;
+	margin-right: 1vw;
+	margin-left: 1vw;
+	margin-top: -1vw;
+	margin-bottom: .8vw;
+}
+
+/*headers*/
+.feature-a-header h1, .feature-a-header h2 {
+	font-family: 'Raleway', sans-serif;
+	line-height: 45%;
+}
+
+/*my name*/
+.feature-a-header h1 {
+	font-size: 5.78vw;
+}
+
+/*what I am*/
+.feature-a-header h2 {
+	font-size: 3.85vw;
+	margin-bottom: 2.85vw;
+}
+
+/*fix some bugs*/
+.feature-a-header p {
+	margin:0;
+}
+
+.feature-a-text {
+	position: relative;
+	text-align: center;
+	color: white;
+	top: 50%;
+	width: 100%;
+	font-family: 'Open Sans', sans-serif;
+}
