@@ -1,0 +1,27 @@
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet">
+	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="/style.css" media="screen">
+</head>
+<body>
+	<section class="article-header">
+		<section class="article-header-flex-section">
+			<ul class="article-header-flex" style="width: fit-content">
+				<li><a href="/"><h1>Sleepy Flower Girl</h1></a></li>
+			</ul>
+			<ul class="article-header-flex right-menu">
+				<li><a href="https://github.com/yourWaifu"><i class="fab fa-github fa-2x" ></i></a></li>
+			</ul>
+		</section>
+		<section class="article-header-info">
+			<h1 class="article-header-title">{{ page.title }}</h1>
+			<div><p>written on {{ page.date | date_to_string }} by {{ page.author }}</p></div>
+		</section>
+	</section>
+	<div class="article">
+		<section class="article-content">
+			{{ content }}
+		</section>
+	</div>
+</body>

@@ -35,7 +35,7 @@ function displayRepositories() {
 				
 				let link = document.createElement("a");
 				link.setAttribute("href", repo.html_url);
-				link.innerHTML = "<i class=\"fa fa-github\" aria-hidden=\"true\"></i>";
+				link.innerHTML = "<i class=\"fab fa-github\"></i>";
 				githubLinkCell.appendChild(link);
 			}
 		}
