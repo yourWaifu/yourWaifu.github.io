@@ -204,3 +204,7 @@ a {
 a:hover {
 	text-decoration: underline;
 }
+
+.github-link{
+	display: none;
+}
