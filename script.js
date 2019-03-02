@@ -5,11 +5,13 @@ function displayRepositories() {
 	httpRequest.open("GET", "https://api.github.com/users/yourWaifu/repos?sort=pushed", true);
 	httpRequest.responseType = "json";
 	httpRequest.onload = function() {
-		document.getElementById("loading repositories").remove(); //remove loading element
 		if (this.status !== 200) {
-			output.innerHTML = "<p>Error: Could not load repositories from Github. The status code " + status + " was returned</p>";
+			console.log("Failed to retrieve up to date repository data")
 			return;
 		}
+		var replacement = document.createElement('tbody');
+		tbody = document.getElementById("repositories-tbody")
+		tbody.parentNode.replaceChild(replacement, tbody);
 		repositoryCount = this.response.length;
 		for (var i = 0; i < repositoryCount; ++i) {
 			let repo = this.response[i];

@@ -32,7 +32,34 @@ layout: null
 		</section>
 	</div>
 	<h1>Repositories</h1>
-	<p class="ld" id="loading repositories"><i class="fas fa-code-branch fa-spin fa-2x fa-fw"></i><br>Loading Repositories from Github</p>
+	<table id="repositories" class="repositories">
+		<tbody id="repositories-tbody">
+			{% assign sorted_repo = (site.github.public_repositories | sort: 'pushed_at') | reverse %}
+			{% for repository in sorted_repo %}
+			{% if repository.fork == false %}
+			<tr>
+				<td>
+					{% if repository.homepage and repository.homepage != "" %}
+					<a href="{{ repository.homepage }}">
+						{{ repository.name }}
+					</a>
+					{% else %}
+					{{ repository.name }}
+					{% endif %}
+				</td>
+				<td>
+					{{ repository.description }}
+				</td>
+				<td>
+					<a href="{{ repository.html_url }}">
+						<i class="fab fa-github"></i>
+					</a>
+				</td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</tbody>
+	</table>
 	<table id="repositories" class="repositories"></table>
 	<h1>Articles</h1>
 	<table class="article-list">
