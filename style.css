@@ -210,6 +210,14 @@ a:hover {
 }
 
 @media screen and (max-width: 37em) {
+	.feature-a-text {
+		font-size: calc(1em / 3 * 2);
+	}
+
+	.main-page h1 {
+		font-size: 1.5em;
+	}
+
 	.highlight pre {
 		overflow: auto;
 	}
