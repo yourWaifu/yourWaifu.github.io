@@ -210,7 +210,7 @@ a:hover {
 }
 
 @media screen and (max-width: 37em) {
-	.highlight {
+	.highlight pre {
 		overflow: scroll;
 	}
 }
