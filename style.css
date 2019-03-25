@@ -42,12 +42,15 @@ table td {
 }
 
 .feature-a {
-	position: relative;
+	position: unset;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	margin: 0 auto;
 	top: 0;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
 }
 
 .feature-a-header {
@@ -55,9 +58,7 @@ table td {
 	text-align: center;
 	width: 76.47%;
 	position: relative;
-    top: 50%;
-    left: 50%;
-	margin: -13% 0 0 -38.235%;
+	margin: 0 auto;
 	color: white;
 }
 
@@ -94,11 +95,10 @@ table td {
 }
 
 .feature-a-text {
-	margin:0 auto;
+	margin: 0 auto;
 	position: relative;
 	text-align: center;
 	color: white;
-	top: 50%;
 	width: 90%;
 	font-family: 'Open Sans', sans-serif;
 }
@@ -212,5 +212,9 @@ a:hover {
 @media screen and (max-width: 37em) {
 	.highlight pre {
 		overflow: auto;
+	}
+
+	table, .ld {
+		font-size: 1em;
 	}
 }
