@@ -208,3 +208,7 @@ a:hover {
 .github-link{
 	display: none;
 }
+
+.highlight {
+	overflow: scroll;
+}
