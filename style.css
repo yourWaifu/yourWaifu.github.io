@@ -233,3 +233,18 @@ a:hover {
 		font-size: 1em;
 	}
 }
+
+/*Code Highlight*/
+
+.c1 {
+	color: #608b4e;
+}
+.k, .cp {
+	color: #569cd6;
+}
+.s {
+	color: #ce8f71;
+}
+.mi {
+	color: #b5cea8;
+}
