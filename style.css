@@ -204,6 +204,11 @@ table {
 	padding-right: 1em;
 }
 
+.article-content h1 {
+	border-bottom: .033em solid rgba(255, 255, 255, .21);
+	font-size: 1.9em;
+}
+
 a {
 	color: #64b8fc;
 	text-decoration: none;
