@@ -209,6 +209,10 @@ table {
 	font-size: 1.9em;
 }
 
+.article img {
+	width: 100%;
+}
+
 a {
 	color: #64b8fc;
 	text-decoration: none;
