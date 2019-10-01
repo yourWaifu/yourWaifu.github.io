@@ -257,3 +257,30 @@ a:hover {
 .mi {
 	color: #b5cea8;
 }
+
+/*bussiness card*/
+.bussiness-card {
+	height: calc(calc(2.25/3.75) * 100vw);
+}
+
+@media print {
+	.bussiness-card {
+		height: 100%;
+	}
+
+	body{
+		width: 3.5 in;
+		height: 2 in; 
+	}
+}
+
+.bussiness-card table {
+	color: black;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.bussiness-card table td {
+	padding-left: 0;
+	padding-right: .25em;
+}
