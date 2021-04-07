@@ -1,0 +1,49 @@
+{
+  "name": "yourwaifu.github.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "dependencies": {
+    "@babel/core": "^7.13.13",
+    "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
+    "@babel/plugin-transform-react-jsx": "^7.13.12",
+    "@babel/plugin-transform-react-jsx-self": "^7.12.13",
+    "@react-three/drei": "^4.0.1",
+    "@react-three/fiber": "^6.0.1",
+    "@types/babel__core": "^7.1.14",
+    "@types/node": "^14.14.37",
+    "@types/react-dom": "^17.0.3",
+    "@types/three": "^0.126.2",
+    "babel-preset-expo": "^8.3.0",
+    "gray-matter": "^4.0.2",
+    "next": "^10.0.9",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-promise-suspense": "^0.3.3",
+    "remark": "^13.0.0",
+    "remark-html": "^13.0.1",
+    "three": "^0.126.1",
+    "three-stdlib": "^1.2.2",
+    "yarn": "^1.22.10"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "typescript": "^4.2.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourWaifu/yourWaifu.github.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yourWaifu/yourWaifu.github.io/issues"
+  },
+  "homepage": "https://github.com/yourWaifu/yourWaifu.github.io#readme"
+}

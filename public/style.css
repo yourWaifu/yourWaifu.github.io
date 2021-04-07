@@ -1,0 +1,290 @@
+:root {
+	--backgroundColor: #212121;
+}
+
+body {
+	margin: 0 auto;
+	background-color: #212121;
+	font-family: 'Open Sans', sans-serif;
+	color: white;
+}
+
+.main-page {
+	text-align: center;
+}
+
+section article {
+	margin: 0 auto;
+}
+
+table, .ld {
+	font-size: 1.5em;
+	margin: auto;
+}
+
+table td {
+	padding-right: .5em;
+	padding-left : .5em;
+	vertical-align: baseline;
+}
+
+.banner-image {
+	position: absolute;
+	display: none;
+	width: 100%;
+	height: 100%;
+	background-size: cover !important;
+	display: block;
+	background: url("pexels-photo-235615.jpg");
+	background-position: center; 
+}
+
+.banner-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(120deg,rgba(166,0,217,.6),rgba(0,196,255,.2)) !important;
+}
+
+.feature-a {
+	position: unset;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0 auto;
+	top: 0;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
+}
+
+.feature-a-header {
+	border-bottom: .3vw solid;
+	text-align: center;
+	width: 76.47%;
+	position: relative;
+	margin: 0 auto;
+	color: white;
+}
+
+/*github icon*/
+.feature-a-header i {
+	font-size: 4vw;
+	color: white;
+	margin-right: 1vw;
+	margin-left: 1vw;
+	margin-top: -1vw;
+	margin-bottom: .8vw;
+}
+
+.article-header-flex i {
+	position: relative;
+	top: -0.1em;
+}
+
+/*headers*/
+.feature-a-header h1, .feature-a-header h2 {
+	font-family: 'Raleway', sans-serif;
+	line-height: 45%;
+}
+
+/*my name*/
+.feature-a-header h1 {
+	font-size: 5.78vw;
+}
+
+/*what I am*/
+.feature-a-header h2 {
+	font-size: 3.85vw;
+	margin-bottom: 2.85vw;
+}
+
+/*fix some bugs*/
+.feature-a-header p {
+	margin:0;
+}
+
+.feature-a-text {
+	margin: 0 auto;
+	position: relative;
+	text-align: center;
+	color: white;
+	width: 90%;
+	font-family: 'Open Sans', sans-serif;
+}
+
+table {
+	padding-left: 1em;
+	padding-right: 1em;
+	vertical-align: unset;
+}
+
+.article-list {
+	padding-bottom: 1em;
+}
+
+.article-header {
+	color: white;
+	background: linear-gradient(120deg,rgba(166,0,217,.6),rgba(0,196,255,.2)) !important;
+}
+
+.article-header-flex-section {
+	padding: 1em;
+	position: static;
+	overflow: hidden;
+	display: flex !important;
+	justify-content: space-between;
+	max-width: 74em;
+	margin: 0 auto;
+}
+
+.article-header-flex {
+	align-items: center;
+	margin: auto !important;
+	list-style: none !important;
+	padding-left: 0 !important;
+	flex: 1 1 auto !important;
+	justify-content: space-between !important;
+}
+
+.right-menu {
+	text-align: right;
+}
+
+.article-header-flex li {
+	margin: 0 !important;
+	list-style: none !important;
+	white-space: nowrap;
+}
+
+.article-header-flex a {
+	color: white;
+	text-decoration: none;
+}
+
+/*my name of articles*/
+.article-header-flex h1 {
+	font-family: 'Raleway', sans-serif;
+	font-size: 2em;
+	margin: 0;
+}
+
+.article-header-info {
+	text-decoration: none;
+	margin: 0 auto;
+	padding-bottom: .5em;
+	padding-left: .5em;
+	padding-right: .5em;
+	text-align: center;
+}
+
+.article-header-title {
+	font-family: 'Raleway', sans-serif;
+	font-size: 2.4em;
+	max-width: 37em;
+	margin: 0 auto;
+}
+
+.article-header-info div {
+	padding-top: .5em
+}
+
+.article-header-info p {
+	margin: 0 auto;
+	opacity: 0.5;
+	font-size: .9em;
+}
+
+.article {
+	margin: 0 auto;
+	text-rendering: optimizeLegibility;
+	color: white;
+}
+
+.article-content {
+	margin: 0 auto;
+	max-width: 37em;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+.article-content h1 {
+	border-bottom: .033em solid rgba(255, 255, 255, .21);
+	font-size: 1.9em;
+}
+
+.article img {
+	width: 100%;
+}
+
+a {
+	color: #64b8fc;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+.github-link{
+	display: none;
+}
+
+@media screen and (max-width: 37em) {
+	.feature-a-text {
+		font-size: calc(1em / 3 * 2);
+	}
+
+	.main-page h1 {
+		font-size: 1.5em;
+	}
+
+	.highlight pre {
+		overflow: auto;
+	}
+
+	table, .ld {
+		font-size: 1em;
+	}
+}
+
+/*Code Highlight*/
+
+.c1 {
+	color: #608b4e;
+}
+.k, .cp {
+	color: #569cd6;
+}
+.s {
+	color: #ce8f71;
+}
+.mi {
+	color: #b5cea8;
+}
+
+/*bussiness card*/
+.bussiness-card {
+	height: calc(calc(2.25/3.75) * 100vw);
+}
+
+@media print {
+	.bussiness-card {
+		height: 100%;
+	}
+
+	body{
+		width: 3.5 in;
+		height: 2 in; 
+	}
+}
+
+.bussiness-card table {
+	color: black;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.bussiness-card table td {
+	padding-left: 0;
+	padding-right: .25em;
+}
