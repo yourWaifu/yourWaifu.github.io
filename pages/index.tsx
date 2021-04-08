@@ -326,11 +326,11 @@ function AutoFOV() {
     return null;
 }
 
-function CameraPath({scrollPos}:{scrollPos:MutableRefObject<number>}) {
+function CameraPath({}:{}) {
     const camera = useThree(state => state.camera);
     useFrame(() => {
-        if (scrollPos.current)
-            camera.position.z = baseCameraZ - (scrollPos.current);
+        let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
+        camera.position.z = baseCameraZ - (scrollPos);
         //for some reason, going under 0 causes issues with drei's Html
         //if (camera.position.z <= 0)
         //    camera.position.z = 0.00000001;
@@ -401,13 +401,6 @@ export default function Home({
         });
     }
 
-    const scrollPos = useRef<number>(0);
-    if (process.browser) {
-        window.addEventListener('scroll', (e) => {
-            scrollPos.current = document.body.scrollTop || document.documentElement.scrollTop;
-        })
-    }
-
     return <Layout key={"index"}>
         { ( process.browser && useCanvas ) && <>
             <div
@@ -452,7 +445,7 @@ export default function Home({
                     <AdaptivePixelRatio />
                     <AutoFOV />
                     <Stats />
-                    <CameraPath scrollPos={scrollPos}/>
+                    <CameraPath/>
                 </Canvas>
             </div>
             <div style={{width: "100%", height: "100%", position: "absolute"}} >
