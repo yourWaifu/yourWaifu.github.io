@@ -373,23 +373,30 @@ export default function Home({
     };
     let gyro = useRef<GyroData>(emptyGyro);
     if (process.browser) {
-        window.addEventListener('deviceorientation', (data: DeviceOrientationEvent) => {
-            if (data.beta !== null && data.gamma !== null) {
-                //define center orientation
-                if (!gyro.current.available) {
-                    gyro.current.center = {
-                        beta: data.beta,
-                        gamma: data.gamma,
+        useEffect(() => {
+            const handleOrientation = (data: DeviceOrientationEvent) => {
+                if (data.beta !== null && data.gamma !== null) {
+                    //define center orientation
+                    if (!gyro.current.available) {
+                        gyro.current.center = {
+                            beta: data.beta,
+                            gamma: data.gamma,
+                        };
+                    }
+                    gyro.current = {
+                        beta: data.beta - gyro.current.center.beta,
+                        gamma: data.gamma - gyro.current.center.gamma,
+                        available: true,
+                        center: gyro.current.center,
                     };
+                } else {
+                    gyro.current = emptyGyro;
                 }
-                gyro.current = {
-                    beta: data.beta - gyro.current.center.beta,
-                    gamma: data.gamma - gyro.current.center.gamma,
-                    available: true,
-                    center: gyro.current.center,
-                };
-            } else {
-                gyro.current = emptyGyro;
+            };
+
+            window.addEventListener('deviceorientation', handleOrientation);
+            return () => {
+                window.removeEventListener('deviceorientation', handleOrientation);
             }
         });
     }
