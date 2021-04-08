@@ -436,7 +436,7 @@ export default function Home({
                     height: "100vh",
                     width: "100%",
                     position: "fixed",
-                    zIndex:9999,
+                    zIndex:2,
                     top: 0,
                     left:0,
                     right:0,
@@ -475,7 +475,7 @@ export default function Home({
                     <CameraPath/>
                 </Canvas>
             </div>
-            <div style={{width: "100%", height: "100%", position: "absolute"}} >
+            <div style={{width: "100%", height: "100%", position: "absolute", zIndex:-9 }} >
                 <div style={{height: "1000px"}} /> {/* front page */}
                 <div style={{height: "900px"}} /> {/* portfolio page */}
                 <div style={{height: "800px"}} /> {/* contact page */}
