@@ -217,6 +217,7 @@ function PageLink({children, href, router}:{
 
 function FrontContent(): JSX.Element {
     const page = useRef<HTMLDivElement>(null!);
+    const pageChild = useRef<HTMLDivElement>(null!);
     const camera = useThree(state => state.camera);
     const positionZ = 0;
 
@@ -235,16 +236,14 @@ function FrontContent(): JSX.Element {
         let newScale = baseCameraZ / distance;
         let baseFontSize = 1;
         let baseWidth = 100;
-        page.current.style.width = `${baseWidth * newScale}vw`;
-        page.current.style.fontSize = `${baseFontSize * newScale}em`;
+        page.current.style.width = `${baseWidth /** newScale*/}vw`;
+        page.current.style.fontSize = `${baseFontSize /** newScale*/}em`;
+        pageChild.current.style.transform = `scale(${newScale})`;
     });
 
     return <group>
         <Html center ref={page}>
-            <div style={{display:"flex", justifyContent: "space-around", fontFamily: '"Sulphur Point", sans-serif'}}>
-                <h3>Contact</h3>
-                <h3>Portfolio</h3>
-                <h3>Articles</h3>
+            <div ref={pageChild} style={{display:"flex", justifyContent: "space-around", fontFamily: '"Sulphur Point", sans-serif'}}>
             </div>
         </Html>
     </group>;
@@ -257,6 +256,7 @@ function Page({
     positionZ: number
 }): JSX.Element {
     const page = useRef<HTMLDivElement>(null!);
+    const pageChild = useRef<HTMLDivElement>(null!); //need for transform
     const camera = useThree(state => state.camera);
 
     useFrame(() => {
@@ -275,8 +275,9 @@ function Page({
         let newScale = baseCameraZ / distance;
         let baseFontSize = 1;
         let baseWidth = 100;
-        page.current.style.width = `${baseWidth * newScale}vw`;
-        page.current.style.fontSize = `${baseFontSize * newScale}em`;
+        page.current.style.width = `${baseWidth}vw`;
+        page.current.style.fontSize = `${baseFontSize}em`;
+        pageChild.current.style.transform = `scale(${newScale})`;
         //fade in as camera gets near
         const when0 = 1100;
         const when1 = 600;
@@ -284,7 +285,9 @@ function Page({
     });
     
     return <Html center ref={page}>
-        {children}
+        <div ref={pageChild}>
+            {children}
+        </div>
     </Html>;
 }
 
