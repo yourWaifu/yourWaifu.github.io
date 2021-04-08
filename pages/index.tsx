@@ -320,6 +320,8 @@ function AutoFOV() {
     useFrame(() => {
         const oldFOV = camera.fov;
         camera.fov = Math.atan( Math.tan( hFOV * Math.PI / 360 ) / camera.aspect ) * 360 / Math.PI;
+        if (camera.fov < 30)
+            camera.fov = 30;
         if (oldFOV !== camera.fov)
             camera.updateProjectionMatrix();
     });
