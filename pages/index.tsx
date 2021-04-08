@@ -14,9 +14,9 @@ import state from '../lib/store' //metadata about the content on index
 import { Block, useBlock } from '../components/blocks' //system for splitting content into blocks that fill the screen
 import { GroupProps } from '@react-three/fiber/dist/declarations/src/three-types'
 import lerp from '../lib/lerp' //common linear interpolation
+import { useSpring } from 'react-spring'
 
 const baseCameraZ = 500;
-
 
 extend({ EffectComposer, ShaderPass, RenderPass });
 
@@ -215,11 +215,22 @@ function PageLink({children, href, router}:{
     )
 }
 
-function FrontContent(): JSX.Element {
+function FrontContent({}:{}): JSX.Element {
     const page = useRef<HTMLDivElement>(null!);
     const pageChild = useRef<HTMLDivElement>(null!);
     const camera = useThree(state => state.camera);
     const positionZ = 0;
+
+    const spring = useSpring<{z: number}>({
+        from: {z: document.documentElement.scrollTop},
+        onRest: (result) => {
+            document.body.scrollTo(0, result.value.z);
+            document.documentElement.scrollTo(0, result.value.z);
+        },
+        onChange: (e) => {
+            document.documentElement.scrollTop = e.z;
+        }
+    });
 
     useFrame(() => {
         if (!page.current)
@@ -241,9 +252,20 @@ function FrontContent(): JSX.Element {
         pageChild.current.style.transform = `scale(${newScale})`;
     });
 
+    const onClickJump: (z: number) => React.MouseEventHandler<HTMLAnchorElement> = (z) => {
+        return (e) => {
+            e.preventDefault();
+            spring.z.set(document.documentElement.scrollTop || document.body.scrollTop);
+            spring.z.start({to: z});
+        }
+    }
+
     return <group>
         <Html center ref={page}>
             <div ref={pageChild} style={{display:"flex", justifyContent: "space-around", fontFamily: '"Sulphur Point", sans-serif'}}>
+                <a href={"#"} onClick={onClickJump(1900)}><h3>Contact</h3></a>
+                <a href={"#"} onClick={onClickJump(1000)}><h3>Portfolio</h3></a>
+                <a href={"#"} onClick={onClickJump(2700)}><h3>Articles</h3></a>
             </div>
         </Html>
     </group>;
@@ -434,7 +456,7 @@ export default function Home({
                         <Keyboard />
                     </Suspense>
 
-                    <FrontContent />
+                    <FrontContent/>
                     <PortfolioContent />
                     <ContactContent />
                     <Page positionZ={-2800}>
