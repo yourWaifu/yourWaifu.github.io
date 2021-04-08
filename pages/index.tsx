@@ -211,7 +211,7 @@ function PageLink({children, href, router}:{
         router.push(href);
     }
     return (
-        <a onClick={handleClick}>{children}</a>
+        <a href={href} onClick={handleClick}>{children}</a>
     )
 }
 
@@ -438,13 +438,13 @@ export default function Home({
                     <PortfolioContent />
                     <ContactContent />
                     <Page positionZ={-2800}>
-                    {allPostsData.map((data) => (<>
-                        <PageLink href={`posts/${data.id}`} router={router}>
-                            <a>{data.title}</a>
-                        </PageLink>
-                        &nbsp;{getPostDateStr(data.date)}
-                        <br/>
-                    </>))}
+                        {allPostsData.map((data) => (<>
+                            <PageLink href={`posts/${data.id}`} router={router}>
+                                {data.title}
+                            </PageLink>
+                            &nbsp;{getPostDateStr(data.date)}
+                            <br/>
+                        </>))}
                     </Page>
 
                     <AdaptivePixelRatio />
