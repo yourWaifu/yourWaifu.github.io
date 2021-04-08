@@ -285,11 +285,12 @@ function Page({
         if (!page.current)
             return;
         //check if it should be on screen
-        const appearZ = baseCameraZ - 500;
+        const appearZ = positionZ + 1100;
         if (appearZ < camera.position.z || camera.position.z < positionZ) {
             page.current.style.visibility = "hidden";
             return;
-        } else if (page.current.style.visibility === "hidden") {
+        }
+        if (page.current.style.visibility === "hidden") {
             page.current.style.visibility = "visible";
         }
         //scale UI
