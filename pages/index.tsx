@@ -91,7 +91,7 @@ function Sig({
     return <group ref={group} rotation={baseRotation} scale={new THREE.Vector3(1,1,1)}>
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
         <pointLight position={[-10, -10, -10]} />
-        <mesh material={material} geometry={(gltf.nodes.Asset3DLoadersceneRoot as THREE.Mesh).geometry} />
+        <mesh castShadow material={material} geometry={(gltf.nodes.Asset3DLoadersceneRoot as THREE.Mesh).geometry} />
     </group>;
 }
 
@@ -101,7 +101,7 @@ function Cup({}): JSX.Element {
 
     const { baseScale } = useBlock();
     
-    const mesh = (gltf.nodes.Circle as THREE.Mesh);
+    const mesh = (gltf.nodes.cup as THREE.Mesh);
     const baseRotation = new THREE.Euler(1.627387, -0.65587553, 2.171643);
 
     useFrame((_, delta) => {
@@ -118,7 +118,7 @@ function Cup({}): JSX.Element {
                 let position = (group.current.position as THREE.Vector3);
                 position.x = baseScale * 0.1;
                 position.y = baseScale * -0.11;
-                position.z = baseScale * 0.4;
+                position.z = baseScale * 0.333;
             }
         }
         if (group.current.rotation) {
@@ -129,10 +129,8 @@ function Cup({}): JSX.Element {
         }
     });
 
-    return <group ref={group} rotation={baseRotation}>
-        <mesh geometry={mesh.geometry}>
-            <meshStandardMaterial color={'slategray'} />
-        </mesh>
+    return <group ref={group} rotation={baseRotation} dispose={null}>
+        <mesh castShadow receiveShadow geometry={(gltf.nodes.cup as THREE.Mesh).geometry} material={gltf.materials['Material.001']} />
     </group>
 }
 
@@ -171,7 +169,7 @@ function Keyboard({}): JSX.Element {
     })
 
     return <group ref={group} rotation={baseRotation}>
-        <mesh geometry={mesh.geometry}>
+        <mesh castShadow receiveShadow geometry={mesh.geometry}>
             <meshStandardMaterial color={'hotpink'} />
         </mesh>
     </group>
@@ -446,6 +444,7 @@ export default function Home({
             >
                 <Canvas
                     orthographic={false}
+                    shadows
                     camera={{ position: [0, 0, baseCameraZ] }}
                     dpr={[0.4, window.devicePixelRatio]}
                 >
@@ -453,8 +452,10 @@ export default function Home({
                     
                     <Suspense fallback={<Html center className="loading" children="Loading..." />}>
                         <Sig mouse={mouse} gyro={gyro}/>
-                        <Cup />
                         <Keyboard />
+                        <Suspense fallback={null}>
+                            <Cup />
+                        </Suspense>
                     </Suspense>
 
                     <FrontContent/>
