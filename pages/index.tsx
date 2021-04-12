@@ -6,24 +6,22 @@ import Link from 'next/link'
 import { NextRouter, useRouter } from 'next/router'
 import { getPostDateStr } from './posts/[id]'
 import { Canvas, useFrame, useLoader, useThree, extend } from "@react-three/fiber"
-import React, { useRef, Suspense, useCallback, MutableRefObject, MouseEventHandler, useEffect, UIEventHandler, RefObject, ReactNode } from 'react'
-import { GLTFLoader, EffectComposer, RenderPass, ShaderPass } from 'three-stdlib';
+import React, { useRef, Suspense, useCallback, MutableRefObject, MouseEventHandler, useEffect, UIEventHandler, RefObject, ReactNode, useMemo } from 'react'
+import { GLTFLoader } from 'three-stdlib';
 import * as THREE from 'three'
-import { Html, Stats } from '@react-three/drei'
+import { Html, Stats, useGLTF } from '@react-three/drei'
 import state from '../lib/store' //metadata about the content on index
 import { Block, useBlock } from '../components/blocks' //system for splitting content into blocks that fill the screen
 import { GroupProps } from '@react-three/fiber/dist/declarations/src/three-types'
 import lerp from '../lib/lerp' //common linear interpolation
 import { useSpring } from 'react-spring'
+import { EffectComposer, DepthOfField, Bloom, SSAO } from '@react-three/postprocessing'
+import ReactDOM from 'react-dom'
 
 const baseCameraZ = 500;
+const viewDistance = 500;
 
-extend({ EffectComposer, ShaderPass, RenderPass });
-
-function PostProcess() { //can't seem to get this to work
-    const { scene, camera, size } = useThree();
-    return null;
-}
+function floatingModel() {}
 
 function sineWave(time: number, amp: number, frequency: number, phase: number = 0) {
     return amp * Math.sin((frequency * time) + phase);
@@ -36,7 +34,6 @@ function deg2Rad(deg: number) {
 interface MouseOverData {x: number, y: number, halfW: number, halfH: number, available?: boolean};
 interface GyroData {beta: number, gamma: number, available?: boolean, center: { beta: number, gamma: number } }
 
-const dummy = new THREE.Object3D();
 function Sig({
     mouse, gyro
 }:{
@@ -48,9 +45,6 @@ function Sig({
 
     const { size, gl, scene } = useThree();
     const ration = gl.getPixelRatio();
-
-    dummy.position.set(0, 0, 0);
-    dummy.rotation.set(Math.PI / 2, 0, 0);
 
     let time = 0.0;
     const baseRotation = new THREE.Euler(Math.PI / 2, 0, 0);
@@ -88,7 +82,7 @@ function Sig({
         }
     });
 
-    return <group ref={group} rotation={baseRotation} scale={new THREE.Vector3(1,1,1)}>
+    return <group ref={group} rotation={baseRotation} scale={new THREE.Vector3(1,1,1)} position={[0, 0, baseCameraZ - viewDistance]}>
         <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
         <pointLight position={[-10, -10, -10]} />
         <mesh castShadow material={material} geometry={(gltf.nodes.Asset3DLoadersceneRoot as THREE.Mesh).geometry} />
@@ -136,11 +130,11 @@ function Cup({}): JSX.Element {
 
 function Keyboard({}): JSX.Element {
     const group = useRef<GroupProps>(null!);
-    const gltf = useLoader(GLTFLoader, '/keyboard.glb');
+    const gltf = useGLTF('/keyboard.glb');
 
     const { baseScale } = useBlock();
     
-    const mesh = (gltf.nodes.Cube as THREE.Mesh);
+    const mesh = (gltf.nodes.keyboard as THREE.Mesh);
     const baseRotation = new THREE.Euler(0.028403261, -1.430315, -1.963495);
 
     useFrame((_, delta) => {
@@ -169,7 +163,7 @@ function Keyboard({}): JSX.Element {
     })
 
     return <group ref={group} rotation={baseRotation}>
-        <mesh castShadow receiveShadow geometry={mesh.geometry}>
+        <mesh castShadow receiveShadow geometry={mesh.geometry} rotation={[Math.PI / 2, 0, 0]} material={gltf.materials['Material.001']}>
             <meshStandardMaterial color={'hotpink'} />
         </mesh>
     </group>
@@ -213,12 +207,73 @@ function PageLink({children, href, router}:{
     )
 }
 
-function FrontContent({}:{}): JSX.Element {
-    const page = useRef<HTMLDivElement>(null!);
-    const pageChild = useRef<HTMLDivElement>(null!);
+function Page({
+    children, positionZ
+}:{
+    children: React.ReactNode,
+    positionZ: number
+}): JSX.Element {
+    const group = useRef<GroupProps>(null!);
     const camera = useThree(state => state.camera);
-    const positionZ = 0;
+    const [page] = React.useState(() => document.createElement('div'));
+    const gl = useThree(({ gl }) => gl);
+    const scene = useThree(({ scene }) => scene);
+    const target = gl.domElement.parentNode;
 
+    React.useEffect(() => {
+        if (!group.current)
+            return;
+        scene.updateMatrixWorld();
+        page.style.cssText = `position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%`;
+        if (target) {
+            target.appendChild(page);
+        }
+        return () => {
+            if (target) target.removeChild(page);
+            ReactDOM.unmountComponentAtNode(page);
+        }
+    }, [target])
+
+    const styles: React.CSSProperties = {
+        position: 'absolute',
+        transform: 'translate3d(-50%,-50%,0)',
+        width: "100%",
+    };
+
+    React.useLayoutEffect(() => {
+        ReactDOM.render(<div style={styles} children={children}/>, page);
+    });
+
+    useFrame(() => {
+        //check if it should be on screen
+        const appearZ = positionZ + 1100;
+        if (appearZ < camera.position.z || camera.position.z < positionZ) {
+            page.style.visibility = "hidden";
+            page.style.display = "none";
+            return;
+        }
+        if (page.style.visibility === "hidden") {
+            page.style.visibility = "visible";
+            page.style.display = "block";
+        }
+        //scale UI
+        let distance = Math.abs(camera.position.z - positionZ);
+        let newScale = viewDistance / distance;
+        let baseFontSize = 1;
+        let baseWidth = 100;
+        page.style.width = `${baseWidth}vw`;
+        page.style.fontSize = `${baseFontSize}em`;
+        page.style.transform = `translate3d(50vh,50vw,0) scale(${newScale})`;
+        //fade in as camera gets near
+        const when1 = viewDistance + 100;
+        const when0 = viewDistance + when1;
+        page.style.opacity = (1 - ((distance - when1)/(when0 - when1))).toString();
+    });
+    
+    return <group ref={group} />
+}
+
+function FrontContent({}:{}): JSX.Element {
     const spring = useSpring<{z: number}>({
         from: {z: document.documentElement.scrollTop},
         onRest: (result) => {
@@ -230,26 +285,6 @@ function FrontContent({}:{}): JSX.Element {
         }
     });
 
-    useFrame(() => {
-        if (!page.current)
-            return;
-        //check if it should be on screen
-        if (camera.position.z < positionZ) {
-            page.current.style.visibility = "hidden";
-            return;
-        } else if (page.current.style.visibility === "hidden") {
-            page.current.style.visibility = "visible";
-        }
-        //scale UI
-        let distance = Math.abs(camera.position.z - positionZ);
-        let newScale = baseCameraZ / distance;
-        let baseFontSize = 1;
-        let baseWidth = 100;
-        page.current.style.width = `${baseWidth /** newScale*/}vw`;
-        page.current.style.fontSize = `${baseFontSize /** newScale*/}em`;
-        pageChild.current.style.transform = `scale(${newScale})`;
-    });
-
     const onClickJump: (z: number) => React.MouseEventHandler<HTMLAnchorElement> = (z) => {
         return (e) => {
             e.preventDefault();
@@ -258,69 +293,29 @@ function FrontContent({}:{}): JSX.Element {
         }
     }
 
-    return <group>
-        <Html center ref={page}>
-            <div ref={pageChild} style={{display:"flex", justifyContent: "space-around", fontFamily: '"Sulphur Point", sans-serif'}}>
-                <a href={"#"} onClick={onClickJump(1900)}><h3>Contact</h3></a>
-                <a href={"#"} onClick={onClickJump(1000)}><h3>Portfolio</h3></a>
-                <a href={"#"} onClick={onClickJump(2700)}><h3>Articles</h3></a>
+    return <Page positionZ={baseCameraZ - viewDistance}>
+        <div style={{display:"flex", justifyContent: "space-evenly", flexDirection: "column"}}>
+            <div style={{height: "66.6vh"}}>
+
             </div>
-        </Html>
-    </group>;
-}
-
-function Page({
-    children, positionZ
-}:{
-    children: React.ReactNode,
-    positionZ: number
-}): JSX.Element {
-    const page = useRef<HTMLDivElement>(null!);
-    const pageChild = useRef<HTMLDivElement>(null!); //need for transform
-    const camera = useThree(state => state.camera);
-
-    useFrame(() => {
-        if (!page.current)
-            return;
-        //check if it should be on screen
-        const appearZ = positionZ + 1100;
-        if (appearZ < camera.position.z || camera.position.z < positionZ) {
-            page.current.style.visibility = "hidden";
-            return;
-        }
-        if (page.current.style.visibility === "hidden") {
-            page.current.style.visibility = "visible";
-        }
-        //scale UI
-        let distance = Math.abs(camera.position.z - positionZ);
-        let newScale = baseCameraZ / distance;
-        let baseFontSize = 1;
-        let baseWidth = 100;
-        page.current.style.width = `${baseWidth}vw`;
-        page.current.style.fontSize = `${baseFontSize}em`;
-        pageChild.current.style.transform = `scale(${newScale})`;
-        //fade in as camera gets near
-        const when0 = 1100;
-        const when1 = 600;
-        page.current.style.opacity = (1 - ((distance - when1)/(when0 - when1))).toString();
-    });
-    
-    return <Html center ref={page}>
-        <div ref={pageChild}>
-            {children}
+            <div style={{display:"flex", justifyContent: "space-evenly", fontFamily: '"Sulphur Point", sans-serif'}}>
+                <a href={"#"} onClick={onClickJump(1900)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3 style={{width: "100%", textAlign: "center",}}>Contact</h3></a>
+                <a href={"#"} onClick={onClickJump(1000)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3>Portfolio</h3></a>
+                <a href={"#"} onClick={onClickJump(2700)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3>Articles</h3></a>
+            </div>
         </div>
-    </Html>;
+    </Page>;
 }
 
 function ContactContent(): JSX.Element {
-    return <Page positionZ={-2000}>
+    return <Page positionZ={baseCameraZ - viewDistance - 2000}>
         <h2>Hao Qi Wu</h2>
         <p>GitHub, E-Mail, Linked-In, Discord</p>
     </Page>;
 }
 
 function PortfolioContent(): JSX.Element {
-    return <Page positionZ={-1100}>
+    return <Page positionZ={baseCameraZ - viewDistance - 1100}>
         <h2>Take a look at my Github</h2>
         <a href="https://github.com/yourWaifu">Link</a>
     </Page>
@@ -329,7 +324,7 @@ function PortfolioContent(): JSX.Element {
 function AdaptivePixelRatio() {
     const current = useThree(state => state.performance.current);
     const setPixelRatio = useThree(state => state.setDpr);
-    useEffect(() => {
+    useMemo(() => {
         setPixelRatio(current * window.devicePixelRatio);
     }, [current]);
     return null;
@@ -337,18 +332,19 @@ function AdaptivePixelRatio() {
 
 function AutoFOV() {
     const hFOV = 90;
-    const cameraMaybe = useThree(state => state.camera);
+    const three = useThree();
+    const cameraMaybe = three.camera;
     if (!('isPerspectiveCamera' in cameraMaybe) || !cameraMaybe.isPerspectiveCamera)
         return null;
     const camera = cameraMaybe as THREE.PerspectiveCamera;
-    useFrame(() => {
+    useMemo(() => {
         const oldFOV = camera.fov;
         camera.fov = Math.atan( Math.tan( hFOV * Math.PI / 360 ) / camera.aspect ) * 360 / Math.PI;
-        if (camera.fov < 30)
-            camera.fov = 30;
+        if (camera.fov < 75)
+            camera.fov = 75;
         if (oldFOV !== camera.fov)
             camera.updateProjectionMatrix();
-    });
+    }, [three.viewport.aspect]);
     return null;
 }
 
@@ -362,6 +358,14 @@ function CameraPath({}:{}) {
         //    camera.position.z = 0.00000001;
     });
     return null;
+}
+
+function PostProcess() {
+    const height = useThree(state => state.viewport.height);
+    const group = useRef<GroupProps>(null!);
+    return <EffectComposer>
+        <Bloom luminanceThreshold={0.666} luminanceSmoothing={1}/>
+    </EffectComposer>
 }
 
 export default function Home({
@@ -427,7 +431,7 @@ export default function Home({
         });
     }
 
-    return <Layout key={"index"}>
+    return <Layout key={"home"}>
         { ( process.browser && useCanvas ) && <>
             <div
                 onMouseMove={onMouseMove}
@@ -445,23 +449,20 @@ export default function Home({
                 <Canvas
                     orthographic={false}
                     shadows
+                    linear
                     camera={{ position: [0, 0, baseCameraZ] }}
                     dpr={[0.4, window.devicePixelRatio]}
                 >
                     <ambientLight intensity={0.5} />
                     
-                    <Suspense fallback={<Html center className="loading" children="Loading..." />}>
+                    <Suspense fallback={<Page positionZ={0}><div style={{display:"flex", justifyContent: "space-around"}}>Loading...</div></Page>}>
                         <Sig mouse={mouse} gyro={gyro}/>
-                        <Keyboard />
-                        <Suspense fallback={null}>
-                            <Cup />
-                        </Suspense>
                     </Suspense>
 
                     <FrontContent/>
                     <PortfolioContent />
                     <ContactContent />
-                    <Page positionZ={-2800}>
+                    <Page positionZ={baseCameraZ - viewDistance - 2800}>
                         {allPostsData.map((data) => (<>
                             <PageLink href={`posts/${data.id}`} router={router}>
                                 {data.title}
