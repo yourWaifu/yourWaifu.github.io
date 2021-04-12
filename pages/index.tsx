@@ -263,7 +263,7 @@ function Page({
         let baseWidth = 100;
         page.style.width = `${baseWidth}vw`;
         page.style.fontSize = `${baseFontSize}em`;
-        page.style.transform = `translate3d(50vh,50vw,0) scale(${newScale})`;
+        page.style.transform = `translate3d(50%,50%,0) scale(${newScale})`;
         //fade in as camera gets near
         const when1 = viewDistance + 100;
         const when0 = viewDistance + when1;
