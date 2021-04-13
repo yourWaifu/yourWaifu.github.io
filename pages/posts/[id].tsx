@@ -31,10 +31,10 @@ export default function Post(
         <section className="article-header">
           <section className="article-header-flex-section">
             <ul className="article-header-flex" style={{ width: "fit-content" }}>
-              <li><Link href="/"><a><h1>yourWaifu</h1></a></Link></li>
+              <li key={'site-name'}><Link href="/"><a><h1>yourWaifu</h1></a></Link></li>
             </ul>
             <ul className="article-header-flex right-menu">
-              <li><a href="https://github.com/yourWaifu"><i className="fab fa-github fa-2x" ></i></a></li>
+              <li key={'github-link'}><a href="https://github.com/yourWaifu"><i className="fab fa-github fa-2x" ></i></a></li>
             </ul>
           </section>
           <section className="article-header-info">

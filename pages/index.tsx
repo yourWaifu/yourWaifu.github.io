@@ -6,10 +6,10 @@ import Link from 'next/link'
 import { NextRouter, useRouter } from 'next/router'
 import { getPostDateStr } from './posts/[id]'
 import { Canvas, useFrame, useLoader, useThree, extend } from "@react-three/fiber"
-import React, { useRef, Suspense, useCallback, MutableRefObject, MouseEventHandler, useEffect, UIEventHandler, RefObject, ReactNode, useMemo } from 'react'
+import React, { useRef, Suspense, useCallback, MutableRefObject, MouseEventHandler, useEffect, UIEventHandler, RefObject, ReactNode, useMemo, useState } from 'react'
 import { GLTFLoader } from 'three-stdlib';
 import * as THREE from 'three'
-import { Html, Stats, useGLTF } from '@react-three/drei'
+import { Stats, useGLTF } from '@react-three/drei'
 import state from '../lib/store' //metadata about the content on index
 import { Block, useBlock } from '../components/blocks' //system for splitting content into blocks that fill the screen
 import { GroupProps } from '@react-three/fiber/dist/declarations/src/three-types'
@@ -207,7 +207,7 @@ function PageLink({children, href, router}:{
     )
 }
 
-function Page({
+function Html({
     children, positionZ
 }:{
     children: React.ReactNode,
@@ -224,7 +224,7 @@ function Page({
         if (!group.current)
             return;
         scene.updateMatrixWorld();
-        page.style.cssText = `position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%`;
+        page.style.cssText = `position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%;z-index:${positionZ + 10000}`;
         if (target) {
             target.appendChild(page);
         }
@@ -238,6 +238,8 @@ function Page({
         position: 'absolute',
         transform: 'translate3d(-50%,-50%,0)',
         width: "100%",
+        height: "100%",
+        zIndex: positionZ + 10000,
     };
 
     React.useLayoutEffect(() => {
@@ -273,7 +275,33 @@ function Page({
     return <group ref={group} />
 }
 
-function FrontContent({}:{}): JSX.Element {
+function Page({
+    children, positionZ
+}:{
+    children: React.ReactNode,
+    positionZ: number
+}): JSX.Element {
+    const style: React.CSSProperties = {
+        maxWidth: "37em",
+        margin: "auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        height: "100%",
+    }
+
+    return <Html positionZ={positionZ}>
+        <div style={style}>
+            {children}
+        </div>
+    </Html>
+}
+
+function FrontContent({
+    router
+}:{
+    router: NextRouter
+}): JSX.Element {
     const spring = useSpring<{z: number}>({
         from: {z: document.documentElement.scrollTop},
         onRest: (result) => {
@@ -285,39 +313,74 @@ function FrontContent({}:{}): JSX.Element {
         }
     });
 
-    const onClickJump: (z: number) => React.MouseEventHandler<HTMLAnchorElement> = (z) => {
+    const onClickJump: (id: string) => React.MouseEventHandler<HTMLAnchorElement> = (id) => {
         return (e) => {
             e.preventDefault();
+            history.pushState({}, "", `#${id}`);
             spring.z.set(document.documentElement.scrollTop || document.body.scrollTop);
-            spring.z.start({to: z});
+            const element = document.getElementById(id);
+            spring.z.start({to: element?.getBoundingClientRect().top});
         }
     }
 
-    return <Page positionZ={baseCameraZ - viewDistance}>
-        <div style={{display:"flex", justifyContent: "space-evenly", flexDirection: "column"}}>
-            <div style={{height: "66.6vh"}}>
+    const styles: React.CSSProperties = {
+        borderRadius: "100%",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        height: "4.5em",
+        width: "4.5em",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    };
 
+    const JumpLink = ({id, children}:{id: string, children: React.ReactNode}) => {
+        return <a href={`#${id}`} onClick={onClickJump(id)} style={styles}>{children}</a>
+    }
+
+    return <Html positionZ={baseCameraZ - viewDistance}>
+        <div style={{display:"flex", flexDirection: "column", height: "100%", width: "100%"}}>
+            <div style={{height: "50%", display:"flex", flexDirection: "column",}}>
+                <div style={{flexGrow: 1}}></div>
+                <div style={{margin: "auto"}}>
+                    <h3 style={{fontFamily: 'sans-serif'}}>Hao Qi Wu</h3>
+                </div>
+                <div style={{flexGrow: 1}}></div>
             </div>
-            <div style={{display:"flex", justifyContent: "space-evenly", fontFamily: '"Sulphur Point", sans-serif'}}>
-                <a href={"#"} onClick={onClickJump(1900)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3 style={{width: "100%", textAlign: "center",}}>Contact</h3></a>
-                <a href={"#"} onClick={onClickJump(1000)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3>Portfolio</h3></a>
-                <a href={"#"} onClick={onClickJump(2700)} style={{borderRadius: "100%", backgroundColor: "rgba(0,0,0,0.5)", height: "4.5em", width: "4.5em", display: "flex", alignItems: "center", justifyContent: "center",}}><h3>Articles</h3></a>
+            <div style={{flexGrow: 1}}></div>
+            <div style={{
+                display:"flex",
+                justifyContent: "space-evenly",
+                fontFamily: '"Sulphur Point", sans-serif',
+                width: "100%",
+                maxWidth: "37em",
+                margin: "auto",
+            }}>
+                <JumpLink id={"contact"}><h3>Contact</h3></JumpLink>
+                <JumpLink id={"portfolio"}><h3>Portfolio</h3></JumpLink>
+                <JumpLink id={"articles"}><h3>Articles</h3></JumpLink>
             </div>
+            <div style={{flexGrow: 1}}></div>
         </div>
-    </Page>;
+    </Html>;
 }
 
 function ContactContent(): JSX.Element {
-    return <Page positionZ={baseCameraZ - viewDistance - 2000}>
+    return <Page positionZ={baseCameraZ - viewDistance - 1900}>
         <h2>Hao Qi Wu</h2>
-        <p>GitHub, E-Mail, Linked-In, Discord</p>
+        <p>E-Mail: wuhao64@gmail.com</p>
+        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
     </Page>;
 }
 
 function PortfolioContent(): JSX.Element {
-    return <Page positionZ={baseCameraZ - viewDistance - 1100}>
-        <h2>Take a look at my Github</h2>
-        <a href="https://github.com/yourWaifu">Link</a>
+    return <Page positionZ={baseCameraZ - viewDistance - 1000}>
+        <h2><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
+        C++ Library for Discord. I'm the author of this library.
+        <a href="https://yourwaifu.dev/sleepy-discord/">More info here.</a>
+        <h2>Contributions to Open Source</h2>
+        <a href="https://github.com/yourWaifu">See my Github Profile</a>
+        <h2><a href="https://yourwaifu.dev/is-your-waifu-legal/">Is Your Waifu Legal</a></h2>
+        Website listing the ages of people in anime and video games.
     </Page>
 }
 
@@ -332,8 +395,8 @@ function AdaptivePixelRatio() {
 
 function AutoFOV() {
     const hFOV = 90;
-    const three = useThree();
-    const cameraMaybe = three.camera;
+    const viewport = useThree(state => state.viewport);
+    const cameraMaybe = useThree(state => state.camera);
     if (!('isPerspectiveCamera' in cameraMaybe) || !cameraMaybe.isPerspectiveCamera)
         return null;
     const camera = cameraMaybe as THREE.PerspectiveCamera;
@@ -344,7 +407,7 @@ function AutoFOV() {
             camera.fov = 75;
         if (oldFOV !== camera.fov)
             camera.updateProjectionMatrix();
-    }, [three.viewport.aspect]);
+    }, [viewport.aspect]);
     return null;
 }
 
@@ -353,9 +416,6 @@ function CameraPath({}:{}) {
     useFrame(() => {
         let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
         camera.position.z = baseCameraZ - (scrollPos);
-        //for some reason, going under 0 causes issues with drei's Html
-        //if (camera.position.z <= 0)
-        //    camera.position.z = 0.00000001;
     });
     return null;
 }
@@ -379,7 +439,7 @@ export default function Home({
     }[]
 }) {
     const router = useRouter();
-    const useCanvas = true;
+    const [useCanvas, setUseCanvas] = useState(false);
 
     const mouse = useRef<MouseOverData>({x: 0, y:0, halfW: 0, halfH: 0});
     const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(({ clientX: x, clientY: y }) => 
@@ -402,37 +462,40 @@ export default function Home({
         },
     };
     let gyro = useRef<GyroData>(emptyGyro);
-    if (process.browser) {
-        useEffect(() => {
-            const handleOrientation = (data: DeviceOrientationEvent) => {
-                if (data.beta !== null && data.gamma !== null) {
-                    //define center orientation
-                    if (!gyro.current.available) {
-                        gyro.current.center = {
-                            beta: data.beta,
-                            gamma: data.gamma,
-                        };
-                    }
-                    gyro.current = {
-                        beta: data.beta - gyro.current.center.beta,
-                        gamma: data.gamma - gyro.current.center.gamma,
-                        available: true,
-                        center: gyro.current.center,
+    useEffect(() => {
+        const handleOrientation = (data: DeviceOrientationEvent) => {
+            if (data.beta !== null && data.gamma !== null) {
+                //define center orientation
+                if (!gyro.current.available) {
+                    gyro.current.center = {
+                        beta: data.beta,
+                        gamma: data.gamma,
                     };
-                } else {
-                    gyro.current = emptyGyro;
                 }
-            };
-
-            window.addEventListener('deviceorientation', handleOrientation);
-            return () => {
-                window.removeEventListener('deviceorientation', handleOrientation);
+                gyro.current = {
+                    beta: data.beta - gyro.current.center.beta,
+                    gamma: data.gamma - gyro.current.center.gamma,
+                    available: true,
+                    center: gyro.current.center,
+                };
+            } else {
+                gyro.current = emptyGyro;
             }
-        });
-    }
+        };
+
+        window.addEventListener('deviceorientation', handleOrientation);
+        return () => {
+            window.removeEventListener('deviceorientation', handleOrientation);
+        }
+    });
+
+    useEffect(() => {
+        setUseCanvas(true);
+    });
 
     return <Layout key={"home"}>
-        { ( process.browser && useCanvas ) && <>
+        <title>Hao Qi Wu</title>
+        { ( useCanvas ) && <>
             <div
                 onMouseMove={onMouseMove}
                 style={{
@@ -455,16 +518,16 @@ export default function Home({
                 >
                     <ambientLight intensity={0.5} />
                     
-                    <Suspense fallback={<Page positionZ={0}><div style={{display:"flex", justifyContent: "space-around"}}>Loading...</div></Page>}>
+                    <Suspense fallback={<Html positionZ={0}><div style={{display:"flex", justifyContent: "space-around"}}>Loading...</div></Html>}>
                         <Sig mouse={mouse} gyro={gyro}/>
                     </Suspense>
 
-                    <FrontContent/>
+                    <FrontContent router={router} />
                     <PortfolioContent />
                     <ContactContent />
-                    <Page positionZ={baseCameraZ - viewDistance - 2800}>
+                    <Page positionZ={baseCameraZ - viewDistance - 2700}>
                         {allPostsData.map((data) => (<>
-                            <PageLink href={`posts/${data.id}`} router={router}>
+                            <PageLink href={`/posts/${data.id}`} router={router}>
                                 {data.title}
                             </PageLink>
                             &nbsp;{getPostDateStr(data.date)}
@@ -474,22 +537,23 @@ export default function Home({
 
                     <AdaptivePixelRatio />
                     <AutoFOV />
-                    <Stats />
                     <CameraPath/>
                 </Canvas>
             </div>
             <div style={{width: "100%", height: "100%", position: "absolute", zIndex:-9 }} >
-                <div style={{height: "1000px"}} /> {/* front page */}
-                <div style={{height: "900px"}} /> {/* portfolio page */}
-                <div style={{height: "800px"}} /> {/* contact page */}
-                <div style={{height: "100%"}} /> {/* the last screen */}
+                <div id={"front"} style={{height: "1000px"}} /> {/* front page */}
+                <div id={"portfolio"} style={{height: "900px"}} /> {/* portfolio page */}
+                <div id={"contact"} style={{height: "800px"}} /> {/* contact page */}
+                <div id={"articles"} style={{height: "100%"}} /> {/* the last screen */}
             </div>
         </>}
         <h1>Hao Qi Wu</h1>
+        Please enable JavaScript to view the home page
         <h2>Contact</h2>
+        E-Mail: wuhao64@gmail.com
         <h2>Articles</h2>
         {allPostsData.map((data) => (<>
-            <Link href={`posts/${data.id}`}>
+            <Link href={`/posts/${data.id}`}>
                 <a>{data.title}</a>
             </Link>
             &nbsp;{getPostDateStr(data.date)}
