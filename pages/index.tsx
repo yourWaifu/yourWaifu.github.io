@@ -297,6 +297,8 @@ function Page({
 }): JSX.Element {
     const style: React.CSSProperties = {
         maxWidth: "37em",
+        paddingLeft: "1em",
+        paddingRight: "1em",
         margin: "auto",
         display: "flex",
         flexDirection: "column",
@@ -329,9 +331,14 @@ function useJumpLinks() {
         return (e) => {
             e.preventDefault();
             history.pushState({}, "", `#${id}`);
-            spring.z.set(document.documentElement.scrollTop || document.body.scrollTop);
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const element = document.getElementById(id);
-            spring.z.start({to: element?.getBoundingClientRect().top});
+            const displacement = element?.getBoundingClientRect().top;
+            if (displacement === undefined)
+                return;
+            const destination = scrollTop + displacement;
+            spring.z.set(scrollTop);
+            spring.z.start({to: destination});
         }
     }
     const styles: React.CSSProperties = {
@@ -351,29 +358,24 @@ function useJumpLinks() {
 }
 
 function FrontContent({
-    router
+    backButtonRef
 }:{
-    router: NextRouter
+    backButtonRef: React.MutableRefObject<HTMLDivElement>
 }): JSX.Element {
     const JumpLink = useJumpLinks();
-    const jumpBackHtml = useRef<number>(null!);
     const camera = useThree(state => state.camera);
-    const justBackInitialZ = baseCameraZ - viewDistance - 999;
+    const positionZ = baseCameraZ - viewDistance;
 
-    useFrame(()=> {
-        if (!jumpBackHtml.current)
+    useFrame(() => {
+        if (!backButtonRef?.current)
             return;
-        const zWhenFillsScreen = camera.position.z - viewDistance
-        if (justBackInitialZ < zWhenFillsScreen) {
-            jumpBackHtml.current = justBackInitialZ;
-            return;
-        }
-        let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
-        jumpBackHtml.current = (baseCameraZ - scrollPos) - viewDistance;
+        const distance = Math.abs(camera.position.z - (positionZ + viewDistance));
+        const newOpacity = ((distance / viewDistance) - 1).toString();
+        backButtonRef.current.style.opacity = newOpacity;
     });
 
     return <>
-        <Html positionZ={baseCameraZ - viewDistance}>
+        <Html positionZ={positionZ}>
             <div style={{display:"flex", flexDirection: "column", height: "100%", width: "100%"}}>
                 <div style={{height: "50%", display:"flex", flexDirection: "column",}}>
                     <div style={{flexGrow: 1}}></div>
@@ -398,9 +400,6 @@ function FrontContent({
                 <div style={{flexGrow: 1}}></div>
             </div>
         </Html>
-        <Html positionZ={justBackInitialZ} zRef={jumpBackHtml}>
-            <div><JumpLink id={"front"}><h3>Back</h3></JumpLink></div>
-        </Html>
     </>;
 }
 
@@ -423,6 +422,15 @@ function PortfolioContent(): JSX.Element {
         Website listing the ages of people in anime and video games
     </Page>
 }
+
+type BackButtonProps = { };
+const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((_, ref): JSX.Element => {
+    const JumpLink = useJumpLinks();
+
+    return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
+        <JumpLink id={"front"}>Back</JumpLink>
+    </div>;
+});
 
 function AdaptivePixelRatio() {
     const performance = useThree(state => state.performance);
@@ -538,6 +546,8 @@ export default function Home({
         }
     });
 
+    let backButtonRef = useRef<HTMLDivElement>(null!);
+
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
@@ -569,7 +579,7 @@ export default function Home({
                         <Sig mouse={mouse} gyro={gyro}/>
                     </Suspense>
 
-                    <FrontContent router={router} />
+                    <FrontContent backButtonRef={backButtonRef} />
                     <PortfolioContent />
                     <ContactContent />
                     <Page positionZ={baseCameraZ - viewDistance - 2700}>
@@ -586,6 +596,7 @@ export default function Home({
                     <AutoFOV />
                     <CameraPath/>
                 </Canvas>
+                <BackButton ref={backButtonRef} />
             </div>
             <div style={{width: "100%", height: "100%", position: "absolute", zIndex:-9, top: 0 }} >
                 <div id={"front"} style={{height: "1000px"}} /> {/* front page */}
