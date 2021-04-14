@@ -12,9 +12,14 @@ export default function BlogLayout(
     children: React.ReactNode
   }
 ) {
+  React.useEffect(()=> {
+    document.documentElement.lang = "en";
+  });
+
   return (
-    <div>
+    <>
       <Head>
+        <meta charSet="utf-8" />
         <link href="https://fonts.googleapis.com/css?family=Raleway:300" rel="stylesheet" />
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css' />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossOrigin="anonymous" />
@@ -29,6 +34,6 @@ export default function BlogLayout(
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main>{children}</main>
-    </div>
+    </>
   );
 }

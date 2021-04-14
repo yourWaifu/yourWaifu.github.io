@@ -207,30 +207,42 @@ function PageLink({children, href, router}:{
     )
 }
 
-function Html({
-    children, positionZ
-}:{
-    children: React.ReactNode,
-    positionZ: number
-}): JSX.Element {
+function getZIndexFromPosition(positionZ: number): number {
+    return positionZ + 10000;
+}
+
+type HtmlProps = {
+    children?: React.ReactNode,
+    positionZ: number,
+    zRef?: React.MutableRefObject<number>,
+};
+
+type HtmlRef = {
+    props: HtmlProps,
+    page: HTMLDivElement,
+};
+
+function Html(props: HtmlProps): JSX.Element {
     const group = useRef<GroupProps>(null!);
     const camera = useThree(state => state.camera);
     const [page] = React.useState(() => document.createElement('div'));
     const gl = useThree(({ gl }) => gl);
     const scene = useThree(({ scene }) => scene);
     const target = gl.domElement.parentNode;
+    if (props.zRef)
+        props.zRef.current = props.positionZ;
 
     React.useEffect(() => {
         if (!group.current)
             return;
         scene.updateMatrixWorld();
-        page.style.cssText = `position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%;z-index:${positionZ + 10000}`;
+        page.style.cssText = "position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%;";
+        page.style.zIndex = `${getZIndexFromPosition(props.positionZ)}`;
         if (target) {
             target.appendChild(page);
         }
         return () => {
             if (target) target.removeChild(page);
-            ReactDOM.unmountComponentAtNode(page);
         }
     }, [target])
 
@@ -239,14 +251,15 @@ function Html({
         transform: 'translate3d(-50%,-50%,0)',
         width: "100%",
         height: "100%",
-        zIndex: positionZ + 10000,
+        zIndex: "inherit",
     };
 
     React.useLayoutEffect(() => {
-        ReactDOM.render(<div style={styles} children={children}/>, page);
+        ReactDOM.render(<div style={styles} children={props.children}/>, page);
     });
 
     useFrame(() => {
+        const positionZ = props.zRef ? props.zRef.current : props.positionZ;
         //check if it should be on screen
         const appearZ = positionZ + 1100;
         if (appearZ < camera.position.z || camera.position.z < positionZ) {
@@ -266,6 +279,7 @@ function Html({
         page.style.width = `${baseWidth}vw`;
         page.style.fontSize = `${baseFontSize}em`;
         page.style.transform = `translate3d(50%,50%,0) scale(${newScale})`;
+        page.style.zIndex = `${getZIndexFromPosition(positionZ)}`;
         //fade in as camera gets near
         const when1 = viewDistance + 100;
         const when0 = viewDistance + when1;
@@ -297,11 +311,10 @@ function Page({
     </Html>
 }
 
-function FrontContent({
-    router
-}:{
-    router: NextRouter
-}): JSX.Element {
+function useJumpLinks() {
+    type JumpLinkProps = {
+        id: string, children: React.ReactNode
+    };
     const spring = useSpring<{z: number}>({
         from: {z: document.documentElement.scrollTop},
         onRest: (result) => {
@@ -312,7 +325,6 @@ function FrontContent({
             document.documentElement.scrollTop = e.z;
         }
     });
-
     const onClickJump: (id: string) => React.MouseEventHandler<HTMLAnchorElement> = (id) => {
         return (e) => {
             e.preventDefault();
@@ -322,7 +334,6 @@ function FrontContent({
             spring.z.start({to: element?.getBoundingClientRect().top});
         }
     }
-
     const styles: React.CSSProperties = {
         borderRadius: "100%",
         backgroundColor: "rgba(0,0,0,0.5)",
@@ -332,36 +343,64 @@ function FrontContent({
         alignItems: "center",
         justifyContent: "center",
     };
-
-    const JumpLink = ({id, children}:{id: string, children: React.ReactNode}) => {
+    const JumpLink = ({id, children}:JumpLinkProps) => {
         return <a href={`#${id}`} onClick={onClickJump(id)} style={styles}>{children}</a>
-    }
+    };
 
-    return <Html positionZ={baseCameraZ - viewDistance}>
-        <div style={{display:"flex", flexDirection: "column", height: "100%", width: "100%"}}>
-            <div style={{height: "50%", display:"flex", flexDirection: "column",}}>
+    return JumpLink;
+}
+
+function FrontContent({
+    router
+}:{
+    router: NextRouter
+}): JSX.Element {
+    const JumpLink = useJumpLinks();
+    const jumpBackHtml = useRef<number>(null!);
+    const camera = useThree(state => state.camera);
+    const justBackInitialZ = baseCameraZ - viewDistance - 999;
+
+    useFrame(()=> {
+        if (!jumpBackHtml.current)
+            return;
+        const zWhenFillsScreen = camera.position.z - viewDistance
+        if (justBackInitialZ < zWhenFillsScreen) {
+            jumpBackHtml.current = justBackInitialZ;
+            return;
+        }
+        jumpBackHtml.current = zWhenFillsScreen;
+    });
+
+    return <>
+        <Html positionZ={baseCameraZ - viewDistance}>
+            <div style={{display:"flex", flexDirection: "column", height: "100%", width: "100%"}}>
+                <div style={{height: "50%", display:"flex", flexDirection: "column",}}>
+                    <div style={{flexGrow: 1}}></div>
+                    <div style={{margin: "auto"}}>
+                        <h3 style={{fontFamily: 'sans-serif'}}>Hao Qi Wu</h3>
+                    </div>
+                    <div style={{flexGrow: 1}}></div>
+                </div>
                 <div style={{flexGrow: 1}}></div>
-                <div style={{margin: "auto"}}>
-                    <h3 style={{fontFamily: 'sans-serif'}}>Hao Qi Wu</h3>
+                <div style={{
+                    display:"flex",
+                    justifyContent: "space-evenly",
+                    fontFamily: '"Sulphur Point", sans-serif',
+                    width: "100%",
+                    maxWidth: "37em",
+                    margin: "auto",
+                }}>
+                    <JumpLink id={"contact"}><h3>Contact</h3></JumpLink>
+                    <JumpLink id={"portfolio"}><h3>Portfolio</h3></JumpLink>
+                    <JumpLink id={"articles"}><h3>Articles</h3></JumpLink>
                 </div>
                 <div style={{flexGrow: 1}}></div>
             </div>
-            <div style={{flexGrow: 1}}></div>
-            <div style={{
-                display:"flex",
-                justifyContent: "space-evenly",
-                fontFamily: '"Sulphur Point", sans-serif',
-                width: "100%",
-                maxWidth: "37em",
-                margin: "auto",
-            }}>
-                <JumpLink id={"contact"}><h3>Contact</h3></JumpLink>
-                <JumpLink id={"portfolio"}><h3>Portfolio</h3></JumpLink>
-                <JumpLink id={"articles"}><h3>Articles</h3></JumpLink>
-            </div>
-            <div style={{flexGrow: 1}}></div>
-        </div>
-    </Html>;
+        </Html>
+        <Html positionZ={justBackInitialZ} zRef={jumpBackHtml}>
+            <div><JumpLink id={"front"}><h3>Back</h3></JumpLink></div>
+        </Html>
+    </>;
 }
 
 function ContactContent(): JSX.Element {
@@ -380,16 +419,21 @@ function PortfolioContent(): JSX.Element {
         <h2>Contributions to Open Source</h2>
         <a href="https://github.com/yourWaifu">See my Github Profile</a>
         <h2><a href="https://yourwaifu.dev/is-your-waifu-legal/">Is Your Waifu Legal</a></h2>
-        Website listing the ages of people in anime and video games.
+        Website listing the ages of people in anime and video games
     </Page>
 }
 
 function AdaptivePixelRatio() {
-    const current = useThree(state => state.performance.current);
+    const performance = useThree(state => state.performance);
     const setPixelRatio = useThree(state => state.setDpr);
-    useMemo(() => {
-        setPixelRatio(current * window.devicePixelRatio);
-    }, [current]);
+    let oldCurrent = performance.current;
+    useFrame(() => {
+        if (oldCurrent != performance.current) {
+            setPixelRatio(performance.current * window.devicePixelRatio);
+            console.log("update res");
+        }
+        oldCurrent = performance.current;
+    });
     return null;
 }
 
@@ -424,7 +468,7 @@ function PostProcess() {
     const height = useThree(state => state.viewport.height);
     const group = useRef<GroupProps>(null!);
     return <EffectComposer>
-        <Bloom luminanceThreshold={0.666} luminanceSmoothing={1}/>
+        
     </EffectComposer>
 }
 
@@ -439,7 +483,11 @@ export default function Home({
     }[]
 }) {
     const router = useRouter();
+
     const [useCanvas, setUseCanvas] = useState(false);
+    useEffect(() => {
+        setUseCanvas(true);
+    });
 
     const mouse = useRef<MouseOverData>({x: 0, y:0, halfW: 0, halfH: 0});
     const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(({ clientX: x, clientY: y }) => 
@@ -489,12 +537,10 @@ export default function Home({
         }
     });
 
-    useEffect(() => {
-        setUseCanvas(true);
-    });
-
     return <Layout key={"home"}>
-        <title>Hao Qi Wu</title>
+        <Head>
+            <title>Hao Qi Wu</title>
+        </Head>
         { ( useCanvas ) && <>
             <div
                 onMouseMove={onMouseMove}
@@ -526,13 +572,13 @@ export default function Home({
                     <PortfolioContent />
                     <ContactContent />
                     <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                        {allPostsData.map((data) => (<>
+                        {allPostsData.map((data) => (<div key={data.id}>
                             <PageLink href={`/posts/${data.id}`} router={router}>
                                 {data.title}
                             </PageLink>
                             &nbsp;{getPostDateStr(data.date)}
                             <br/>
-                        </>))}
+                        </div>))}
                     </Page>
 
                     <AdaptivePixelRatio />
@@ -540,7 +586,7 @@ export default function Home({
                     <CameraPath/>
                 </Canvas>
             </div>
-            <div style={{width: "100%", height: "100%", position: "absolute", zIndex:-9 }} >
+            <div style={{width: "100%", height: "100%", position: "absolute", zIndex:-9, top: 0 }} >
                 <div id={"front"} style={{height: "1000px"}} /> {/* front page */}
                 <div id={"portfolio"} style={{height: "900px"}} /> {/* portfolio page */}
                 <div id={"contact"} style={{height: "800px"}} /> {/* contact page */}
@@ -549,16 +595,18 @@ export default function Home({
         </>}
         <h1>Hao Qi Wu</h1>
         Please enable JavaScript to view the home page
+        <a href="https://github.com/yourWaifu">Github Profile</a>
         <h2>Contact</h2>
         E-Mail: wuhao64@gmail.com
+        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
         <h2>Articles</h2>
-        {allPostsData.map((data) => (<>
+        {allPostsData.map((data) => (<div key={data.id}>
             <Link href={`/posts/${data.id}`}>
                 <a>{data.title}</a>
             </Link>
             &nbsp;{getPostDateStr(data.date)}
             <br/>
-        </>))}
+        </div>))}
     </Layout>
 }
 
