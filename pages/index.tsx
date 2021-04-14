@@ -368,7 +368,8 @@ function FrontContent({
             jumpBackHtml.current = justBackInitialZ;
             return;
         }
-        jumpBackHtml.current = zWhenFillsScreen;
+        let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
+        jumpBackHtml.current = (baseCameraZ - scrollPos) - viewDistance;
     });
 
     return <>
