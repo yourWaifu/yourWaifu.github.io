@@ -100,11 +100,7 @@ function Cup({}): JSX.Element {
 
     const scaleFactor = 0.043026 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-    const position = new THREE.Vector3(
-        baseScale * 0.5,
-        baseScale * 0,
-        baseScale * -1
-    )
+    const position = new THREE.Vector3(baseScale * 0.5, baseScale * 0, -900);
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -132,11 +128,7 @@ function Keyboard({}): JSX.Element {
     const baseRotation = new THREE.Euler(0.028403261, -1.430315, -1.963495);
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-    const position = new THREE.Vector3(
-        baseScale * 0,
-        baseScale * 0,
-        baseScale * -3.6
-    );
+    const position = new THREE.Vector3(baseScale * 0, baseScale * 0, -3200);
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -166,9 +158,9 @@ function CPU(): JSX.Element {
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
     const position = new THREE.Vector3(
+        baseScale * 0.10,
         baseScale * 0,
-        baseScale * 0.3,
-        baseScale * -2
+        -1800
     );
 
     useFrame((_, delta) => {
@@ -176,7 +168,7 @@ function CPU(): JSX.Element {
             return;
         if (group.current.rotation) {
             let rotation = (group.current.rotation as THREE.Euler);
-            rotation.y += delta * -0.02;
+            rotation.y += delta * -0.05;
         }
     });
 
