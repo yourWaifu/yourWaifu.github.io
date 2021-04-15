@@ -133,9 +133,9 @@ function Keyboard({}): JSX.Element {
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
     const position = new THREE.Vector3(
-        baseScale * -0.9,
         baseScale * 0,
-        baseScale * -3.20
+        baseScale * 0,
+        baseScale * -3.6
     );
 
     useFrame((_, delta) => {
