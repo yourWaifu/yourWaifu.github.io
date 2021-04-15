@@ -490,8 +490,19 @@ export default function Home({
     const router = useRouter();
 
     const [useCanvas, setUseCanvas] = useState(false);
+    let canUseWebGL: null | boolean = null;
     useEffect(() => {
-        if (useCanvas === false)
+
+        if (!window.WebGLRenderingContext) {
+            canUseWebGL = false;
+        } else {
+            let canvas = document.createElement("canvas");
+            var context = canvas.getContext("webgl")
+                || canvas.getContext("experimental-webgl");
+            canUseWebGL = context && context instanceof WebGLRenderingContext;
+        }
+
+        if (canUseWebGL === true && useCanvas === false)
             setUseCanvas(true);
     });
 
@@ -625,7 +636,18 @@ export default function Home({
             </>
         })()}
         <h1>Hao Qi Wu</h1>
-        Please enable JavaScript to view the home page
+        {
+            canUseWebGL === null ?
+                <p>Please enable JavaScript to view the home page</p>
+            : canUseWebGL === false ? 
+                <p>
+                    Please enable WebGL or use a browser with it enabled to view the home page.
+                    Visit <a href="https://get.webgl.org/">https://get.webgl.org/</a> for more info.
+                </p>
+            :
+                <p>Couldn't display home page, using fail safe</p>
+        }
+        
         <a href="https://github.com/yourWaifu">Github Profile</a>
         <h2>Contact</h2>
         E-Mail: wuhao64@gmail.com
