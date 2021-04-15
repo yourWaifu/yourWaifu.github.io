@@ -490,19 +490,23 @@ export default function Home({
     const router = useRouter();
 
     const [useCanvas, setUseCanvas] = useState(false);
-    let canUseWebGL: null | boolean = null;
+    const [canUseWebGL, setUseWebGL] = useState<null | boolean>(null);
     useEffect(() => {
 
-        if (!window.WebGLRenderingContext) {
-            canUseWebGL = false;
-        } else {
+        let hasWebGL: boolean = false;
+        if (window.WebGLRenderingContext) {
             let canvas = document.createElement("canvas");
             var context = canvas.getContext("webgl")
                 || canvas.getContext("experimental-webgl");
-            canUseWebGL = context && context instanceof WebGLRenderingContext;
+            hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
         }
 
-        if (canUseWebGL === true && useCanvas === false)
+        if (hasWebGL !== true) {
+            setUseWebGL(false);
+            return;
+        }
+
+        if (useCanvas === false)
             setUseCanvas(true);
     });
 
