@@ -566,7 +566,6 @@ export default function Home({
 
             const backgroundColor = getComputedStyle(document.documentElement)
                 .getPropertyValue('--backgroundColor');
-            console.log(backgroundColor)
 
             return <>
                 <div
