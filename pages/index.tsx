@@ -628,6 +628,7 @@ export default function Home({
                         <AdaptivePixelRatio />
                         <AutoFOV />
                         <CameraPath />
+                        <Stats />
                     </Canvas>
                     <BackButton ref={backButtonRef} />
                 </div>
