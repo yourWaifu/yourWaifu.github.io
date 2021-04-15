@@ -98,23 +98,17 @@ function Cup({}): JSX.Element {
     const mesh = (gltf.nodes.cup as THREE.Mesh);
     const baseRotation = new THREE.Euler(1.627387, -0.65587553, 2.171643);
 
+    const scaleFactor = 0.043026 * baseScale;
+    const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
+    const position = new THREE.Vector3(
+        baseScale * 0.5,
+        baseScale * 0,
+        baseScale * -1
+    )
+
     useFrame((_, delta) => {
         if (!group.current)
             return;
-        const newScale = 0.043026 * baseScale;
-        if (group.current.scale && ((group.current.scale) as THREE.Vector3).x != newScale) {
-            let scale = (group.current.scale as THREE.Vector3);
-            scale.x = newScale;
-            scale.y = newScale;
-            scale.z = newScale;
-
-            if (group.current.position) {
-                let position = (group.current.position as THREE.Vector3);
-                position.x = baseScale * 0.1;
-                position.y = baseScale * -0.11;
-                position.z = baseScale * 0.333;
-            }
-        }
         if (group.current.rotation) {
             let rotation = (group.current.rotation as THREE.Euler);
             rotation.x += delta * 0.05235988;
@@ -123,7 +117,7 @@ function Cup({}): JSX.Element {
         }
     });
 
-    return <group ref={group} rotation={baseRotation} dispose={null}>
+    return <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
         <mesh castShadow receiveShadow geometry={(gltf.nodes.cup as THREE.Mesh).geometry} material={gltf.materials['Material.001']} />
     </group>
 }
@@ -136,54 +130,64 @@ function Keyboard({}): JSX.Element {
     
     const mesh = (gltf.nodes.keyboard as THREE.Mesh);
     const baseRotation = new THREE.Euler(0.028403261, -1.430315, -1.963495);
+    const scaleFactor = 0.0227021 * baseScale;
+    const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
+    const position = new THREE.Vector3(
+        baseScale * -0.9,
+        baseScale * 0,
+        baseScale * -3.20
+    );
 
     useFrame((_, delta) => {
         if (!group.current)
             return;
-        const newScale = 0.0227021 * baseScale;
-        if (group.current.scale && ((group.current.scale) as THREE.Vector3).x != newScale) {
-            let scale = (group.current.scale as THREE.Vector3);
-            scale.x = newScale;
-            scale.y = newScale;
-            scale.z = newScale;
-
-            if (group.current.position) {
-                let position = (group.current.position as THREE.Vector3);
-                position.x = baseScale * -0.1;
-                position.y = baseScale * 0.25;
-                position.z = baseScale * -0.3;
-            }
-        }
         if (group.current.rotation) {
             let rotation = (group.current.rotation as THREE.Euler);
             rotation.x += delta * 0.01745329;
             rotation.y += delta * 0.1047198;
             rotation.z += delta * 0.03490659;
         }
-    })
+    });
 
-    return <group ref={group} rotation={baseRotation}>
+    return <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
         <mesh castShadow receiveShadow geometry={mesh.geometry} rotation={[Math.PI / 2, 0, 0]} material={gltf.materials['Material.001']}>
             <meshStandardMaterial color={'hotpink'} />
         </mesh>
     </group>
 }
 
-function Box(props: JSX.IntrinsicElements['mesh']) {
-    // This reference will give us direct access to the mesh
-    const mesh = useRef<THREE.Mesh>(null!)
-    // Rotate mesh every frame, this is outside of React without overhead
-    useFrame(() => {
-        mesh.current.rotation.x = mesh.current.rotation.y += 0.01
-    })
-    return (
+function CPU(): JSX.Element {
+    const group = useRef<THREE.Group>();
+    const { nodes, materials } = useGLTF("/cpu.glb");
+
+    const { baseScale } = useBlock();
+    
+    const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
+    const scaleFactor = 0.0227021 * baseScale;
+    const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
+    const position = new THREE.Vector3(
+        baseScale * 0,
+        baseScale * 0.3,
+        baseScale * -2
+    );
+
+    useFrame((_, delta) => {
+        if (!group.current)
+            return;
+        if (group.current.rotation) {
+            let rotation = (group.current.rotation as THREE.Euler);
+            rotation.y += delta * -0.02;
+        }
+    });
+
+    return <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
         <mesh
-            {...props}
-            ref={mesh}>
-            <boxBufferGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color={'orange'} />
-        </mesh>
-    )
+            castShadow
+            receiveShadow
+            geometry={(nodes.CPU as THREE.Mesh).geometry}
+            material={materials['Material.001']}
+        />
+    </group>
 }
 
 function Paragraph({ }) {
@@ -428,7 +432,7 @@ const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((_, ref): J
     const JumpLink = useJumpLinks();
 
     return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
-        <JumpLink id={"front"}>Back</JumpLink>
+        <JumpLink id={"front"}>Home</JumpLink>
     </div>;
 });
 
@@ -577,6 +581,15 @@ export default function Home({
                     
                     <Suspense fallback={<Html positionZ={0}><div style={{display:"flex", justifyContent: "space-around"}}>Loading...</div></Html>}>
                         <Sig mouse={mouse} gyro={gyro}/>
+                    </Suspense>
+                    <Suspense fallback={null}>
+                        <Cup />
+                    </Suspense>
+                    <Suspense fallback={null}>
+                        <CPU />
+                    </Suspense>
+                    <Suspense fallback={null}>
+                        <Keyboard />
                     </Suspense>
 
                     <FrontContent backButtonRef={backButtonRef} />
