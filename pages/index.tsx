@@ -17,9 +17,12 @@ import lerp from '../lib/lerp' //common linear interpolation
 import { useSpring } from 'react-spring'
 import { EffectComposer, DepthOfField, Bloom, SSAO } from '@react-three/postprocessing'
 import ReactDOM from 'react-dom'
+import { PerspectiveCamera } from 'three'
 
 const baseCameraZ = 500;
 const viewDistance = 500;
+const baseScale = 894.9274309237762;
+const minVFOV = 75;
 
 function floatingModel() {}
 
@@ -49,7 +52,7 @@ function Sig({
     let time = 0.0;
     const baseRotation = new THREE.Euler(Math.PI / 2, 0, 0);
 
-    let { viewportWidth, viewportHeight, canvasWidth, canvasHeight, baseScale } = useBlock();
+    let { viewportWidth, viewportHeight } = useBlock();
     const aspect = viewportWidth / viewportHeight;
 
     useFrame((_, delta) => {
@@ -92,8 +95,6 @@ function Sig({
 function Cup({}): JSX.Element {
     const group = useRef<GroupProps>();
     const gltf = useLoader(GLTFLoader, '/cup.glb');
-
-    const { baseScale } = useBlock();
     
     const mesh = (gltf.nodes.cup as THREE.Mesh);
     const baseRotation = new THREE.Euler(1.627387, -0.65587553, 2.171643);
@@ -101,6 +102,20 @@ function Cup({}): JSX.Element {
     const scaleFactor = 0.043026 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
     const position = new THREE.Vector3(baseScale * 0.5, baseScale * 0, -900);
+
+    const aspect = useThree(state => state.viewport.aspect);
+    useEffect(() => {
+        if (!group.current)
+            return;
+        let position = (group.current.position as THREE.Vector3);
+        if (aspect < 1) {
+            position.x = baseScale * 0.28;
+            position.y = baseScale * -0.12;
+        } else {
+            position.x = baseScale * 0.3;
+            position.y = baseScale * 0;
+        }
+    }, [aspect]);
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -121,14 +136,23 @@ function Cup({}): JSX.Element {
 function Keyboard({}): JSX.Element {
     const group = useRef<GroupProps>(null!);
     const gltf = useGLTF('/keyboard.glb');
-
-    const { baseScale } = useBlock();
     
     const mesh = (gltf.nodes.keyboard as THREE.Mesh);
     const baseRotation = new THREE.Euler(0.028403261, -1.430315, -1.963495);
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
     const position = new THREE.Vector3(baseScale * 0, baseScale * 0, -3200);
+    const VFOV = useThree(state => (state.camera as PerspectiveCamera).fov);
+
+    useEffect(() => {
+        if (!group.current)
+            return;
+        if (group.current.scale) {
+            let scale = (group.current.scale as THREE.Vector3);
+            const newScale = scaleFactor * (VFOV/minVFOV) * 1.5;
+            scale.x = newScale; scale.y = newScale; scale.z = newScale;
+        }
+    });
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -151,17 +175,27 @@ function Keyboard({}): JSX.Element {
 function CPU(): JSX.Element {
     const group = useRef<THREE.Group>();
     const { nodes, materials } = useGLTF("/cpu.glb");
-
-    const { baseScale } = useBlock();
     
     const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
-    const position = new THREE.Vector3(
-        baseScale * 0.10,
-        baseScale * 0,
-        -1800
-    );
+    const position = new THREE.Vector3(baseScale * 0.10, baseScale * 0, -1600);
+
+    const aspect = useThree(state => state.viewport.aspect);
+    useEffect(() => {
+        if (!group.current)
+            return;
+        let position = (group.current.position as THREE.Vector3);
+        if (aspect < 1) {
+            position.x = baseScale * 0;
+            position.y = baseScale * -0.03;
+            position.z = -1500;
+        } else {
+            position.x = baseScale * 0.06;
+            position.y = baseScale * 0;
+            position.z = -1600;
+        }
+    }, [aspect]);
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -240,7 +274,7 @@ function Html(props: HtmlProps): JSX.Element {
         return () => {
             if (target) target.removeChild(page);
         }
-    }, [target])
+    }, [target]);
 
     const styles: React.CSSProperties = {
         position: 'absolute',
@@ -400,10 +434,38 @@ function FrontContent({
 }
 
 function ContactContent(): JSX.Element {
+    const aspect = useThree(state => state.viewport.aspect);
+    const getStyle = ():React.CSSProperties => {
+        return aspect < 1 ? {
+            display: "flex",
+            height: "100%",
+            textAlign: "center",
+            flexDirection: "column"
+        } : {
+            display: "flex",
+            flexDirection: "row",
+        };
+    }
+    const [style, setStyle] = useState<React.CSSProperties>(getStyle());
+    useEffect(() => setStyle(getStyle()), [aspect < 1]);
+
     return <Page positionZ={baseCameraZ - viewDistance - 1900}>
-        <h2>Hao Qi Wu</h2>
-        <p>E-Mail: wuhao64@gmail.com</p>
-        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+        <div style={style}>
+            <div style={{
+                    display:"flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    flexBasis: "50%",
+                    flexShrink: 1,
+                }}>
+                <div>
+                    <h2>Hao Qi Wu</h2>
+                    <p>E-Mail: wuhao64@gmail.com</p>
+                    <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+                </div>
+            </div>
+            <div style={{ flexBasis: "50%" }} />
+        </div>
     </Page>;
 }
 
@@ -452,8 +514,8 @@ function AutoFOV() {
     useMemo(() => {
         const oldFOV = camera.fov;
         camera.fov = Math.atan( Math.tan( hFOV * Math.PI / 360 ) / camera.aspect ) * 360 / Math.PI;
-        if (camera.fov < 75)
-            camera.fov = 75;
+        if (camera.fov < minVFOV)
+            camera.fov = minVFOV;
         if (oldFOV !== camera.fov)
             camera.updateProjectionMatrix();
     }, [viewport.aspect]);
@@ -492,17 +554,20 @@ export default function Home({
     const [useCanvas, setUseCanvas] = useState(false);
     const [canUseWebGL, setUseWebGL] = useState<null | boolean>(null);
     useEffect(() => {
-
-        let hasWebGL: boolean = false;
-        if (window.WebGLRenderingContext) {
-            let canvas = document.createElement("canvas");
-            var context = canvas.getContext("webgl")
-                || canvas.getContext("experimental-webgl");
-            hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
-        }
-
-        if (hasWebGL !== true) {
-            setUseWebGL(false);
+        if (canUseWebGL === null) {
+            let hasWebGL: boolean = false;
+            if (window.WebGLRenderingContext) {
+                let canvas = document.createElement("canvas");
+                var context = canvas.getContext("webgl")
+                    || canvas.getContext("experimental-webgl");
+                hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
+            }
+    
+            if (hasWebGL !== true) {
+                setUseWebGL(false);
+                return;
+            }
+        } else if (canUseWebGL === false) {
             return;
         }
 
@@ -614,13 +679,18 @@ export default function Home({
                         <PortfolioContent />
                         <ContactContent />
                         <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                            {allPostsData.map((data) => (<div key={data.id}>
-                                <PageLink href={`/posts/${data.id}`} router={router}>
-                                    {data.title}
-                                </PageLink>
-                            &nbsp;{getPostDateStr(data.date)}
-                                <br />
-                            </div>))}
+                            <div style={{textShadow: "2px 2px 1px black"}}>
+                                {allPostsData.map((data) => (
+                                    <div key={data.id}>
+                                        <PageLink href={`/posts/${data.id}`} router={router}>
+                                            {data.title}
+                                        </PageLink>
+                                        &nbsp;{getPostDateStr(data.date)}
+                                        <br />
+                                    </div>
+                                ))}
+                            </div>
+
                         </Page>
 
                         <fog attach="fog" args={[backgroundColor, 600, 1000]} />
@@ -628,7 +698,6 @@ export default function Home({
                         <AdaptivePixelRatio />
                         <AutoFOV />
                         <CameraPath />
-                        <Stats />
                     </Canvas>
                     <BackButton ref={backButtonRef} />
                 </div>
