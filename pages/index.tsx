@@ -539,41 +539,19 @@ function PostProcess() {
     </EffectComposer>
 }
 
-export default function Home({
-    allPostsData
-}: {
+type HomeProps = {
     allPostsData: {
         data: string,
         title: string,
         id: string,
         date: string,
     }[]
-}) {
+};
+
+function ThreeDeHome({
+    allPostsData
+}: HomeProps) {
     const router = useRouter();
-
-    const [useCanvas, setUseCanvas] = useState(false);
-    const [canUseWebGL, setUseWebGL] = useState<null | boolean>(null);
-    useEffect(() => {
-        if (canUseWebGL === null) {
-            let hasWebGL: boolean = false;
-            if (window.WebGLRenderingContext) {
-                let canvas = document.createElement("canvas");
-                var context = canvas.getContext("webgl")
-                    || canvas.getContext("experimental-webgl");
-                hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
-            }
-    
-            if (hasWebGL !== true) {
-                setUseWebGL(false);
-                return;
-            }
-        } else if (canUseWebGL === false) {
-            return;
-        }
-
-        if (useCanvas === false)
-            setUseCanvas(true);
-    });
 
     const mouse = useRef<MouseOverData>({x: 0, y:0, halfW: 0, halfH: 0});
     const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(({ clientX: x, clientY: y }) => 
@@ -623,92 +601,116 @@ export default function Home({
         }
     });
 
+    const loadingElement = <Html positionZ={0}>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+            Loading...
+        </div>
+    </Html>;
+
+    const backgroundColor = getComputedStyle(document.documentElement)
+        .getPropertyValue('--backgroundColor');
+
+    useEffect(() => {
+        if (window.location.hash) {
+            const elementID = window.location.hash.substring(1);
+            document.getElementById(elementID)?.scrollIntoView();
+        }
+    }, []);
+
     let backButtonRef = useRef<HTMLDivElement>(null!);
+
+    return <>
+        <div
+            onMouseMove={onMouseMove}
+            style={{
+                height: "100vh",
+                width: "100%",
+                position: "fixed",
+                zIndex: 2,
+                top: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: backgroundColor,
+            }}
+        >
+            <Canvas
+                orthographic={false}
+                shadows
+                linear
+                camera={{ position: [0, 0, baseCameraZ] }}
+                dpr={[0.4, window.devicePixelRatio]}
+            >
+                <ambientLight intensity={0.5} />
+
+                <Suspense fallback={loadingElement}>
+                    <Sig mouse={mouse} gyro={gyro} />
+                </Suspense>
+                <Suspense fallback={null}>
+                    <Cup />
+                </Suspense>
+                <Suspense fallback={null}>
+                    <CPU />
+                </Suspense>
+                <Suspense fallback={null}>
+                    <Keyboard />
+                </Suspense>
+
+                <FrontContent backButtonRef={backButtonRef} />
+                <PortfolioContent />
+                <ContactContent />
+                <Page positionZ={baseCameraZ - viewDistance - 2700}>
+                    <div style={{textShadow: "2px 2px 1px black"}}>
+                        {allPostsData.map((data) => (
+                            <div key={data.id}>
+                                <PageLink href={`/posts/${data.id}`} router={router}>
+                                    {data.title}
+                                </PageLink>
+                                &nbsp;{getPostDateStr(data.date)}
+                                <br />
+                            </div>
+                        ))}
+                    </div>
+
+                </Page>
+
+                <fog attach="fog" args={[backgroundColor, 600, 1000]} />
+
+                <AdaptivePixelRatio />
+                <AutoFOV />
+                <CameraPath />
+            </Canvas>
+            <BackButton ref={backButtonRef} />
+        </div>
+        <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
+            <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
+            <div id={"portfolio"} style={{ height: "900px" }} /> {/* portfolio page */}
+            <div id={"contact"} style={{ height: "800px" }} /> {/* contact page */}
+            <div id={"articles"} style={{ height: "100%" }} /> {/* the last screen */}
+        </div>
+    </>
+}
+
+export default function Home(props: HomeProps) {
+    const [canUseWebGL, setUseWebGL] = useState<null | boolean>(null);
+    useEffect(() => {
+        if (canUseWebGL === null) {
+            let hasWebGL: boolean = false;
+            if (window.WebGLRenderingContext) {
+                let canvas = document.createElement("canvas");
+                var context = canvas.getContext("webgl")
+                    || canvas.getContext("experimental-webgl");
+                hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
+            }
+    
+            setUseWebGL(hasWebGL);
+        }
+    }, []);
 
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
-        {(useCanvas) && (() => {
-            const loadingElement = <Html positionZ={0}>
-                <div style={{ display: "flex", justifyContent: "space-around" }}>
-                    Loading...
-                </div>
-            </Html>;
-
-            const backgroundColor = getComputedStyle(document.documentElement)
-                .getPropertyValue('--backgroundColor');
-
-            return <>
-                <div
-                    onMouseMove={onMouseMove}
-                    style={{
-                        height: "100vh",
-                        width: "100%",
-                        position: "fixed",
-                        zIndex: 2,
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        backgroundColor: backgroundColor,
-                    }}
-                >
-                    <Canvas
-                        orthographic={false}
-                        shadows
-                        linear
-                        camera={{ position: [0, 0, baseCameraZ] }}
-                        dpr={[0.4, window.devicePixelRatio]}
-                    >
-                        <ambientLight intensity={0.5} />
-
-                        <Suspense fallback={loadingElement}>
-                            <Sig mouse={mouse} gyro={gyro} />
-                        </Suspense>
-                        <Suspense fallback={null}>
-                            <Cup />
-                        </Suspense>
-                        <Suspense fallback={null}>
-                            <CPU />
-                        </Suspense>
-                        <Suspense fallback={null}>
-                            <Keyboard />
-                        </Suspense>
-
-                        <FrontContent backButtonRef={backButtonRef} />
-                        <PortfolioContent />
-                        <ContactContent />
-                        <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                            <div style={{textShadow: "2px 2px 1px black"}}>
-                                {allPostsData.map((data) => (
-                                    <div key={data.id}>
-                                        <PageLink href={`/posts/${data.id}`} router={router}>
-                                            {data.title}
-                                        </PageLink>
-                                        &nbsp;{getPostDateStr(data.date)}
-                                        <br />
-                                    </div>
-                                ))}
-                            </div>
-
-                        </Page>
-
-                        <fog attach="fog" args={[backgroundColor, 600, 1000]} />
-
-                        <AdaptivePixelRatio />
-                        <AutoFOV />
-                        <CameraPath />
-                    </Canvas>
-                    <BackButton ref={backButtonRef} />
-                </div>
-                <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
-                    <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
-                    <div id={"portfolio"} style={{ height: "900px" }} /> {/* portfolio page */}
-                    <div id={"contact"} style={{ height: "800px" }} /> {/* contact page */}
-                    <div id={"articles"} style={{ height: "100%" }} /> {/* the last screen */}
-                </div>
-            </>
-        })()}
+        {(canUseWebGL === true) && <ThreeDeHome {...props}/>}
         <h1>Hao Qi Wu</h1>
         {
             canUseWebGL === null ?
@@ -727,7 +729,7 @@ export default function Home({
         E-Mail: wuhao64@gmail.com
         <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
         <h2>Articles</h2>
-        {allPostsData.map((data) => (<div key={data.id}>
+        {props.allPostsData.map((data) => (<div key={data.id}>
             <Link href={`/posts/${data.id}`}>
                 <a>{data.title}</a>
             </Link>
