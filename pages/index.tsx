@@ -466,8 +466,8 @@ function FrontContent({
 
 function ContactInfo(): JSX.Element {
     return <>
-        <h2>Hao Qi Wu</h2>
-        <p>E-Mail: wuhao64@gmail.com</p>
+        E-Mail: wuhao64@gmail.com <br />
+        <a href={"https://www.linkedin.com/in/hao-qi-wu"}>LinkedIn profile</a><br />
         <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
     </>;
 }
@@ -498,6 +498,7 @@ function ContactContent(): JSX.Element {
                     flexShrink: 1,
                 }}>
                 <div>
+                    <h2>Hao Qi Wu</h2>
                     <ContactInfo />
                 </div>
             </div>
@@ -506,8 +507,8 @@ function ContactContent(): JSX.Element {
     </Page>;
 }
 
-function PortfolioContent(): JSX.Element {
-    return <Page positionZ={baseCameraZ - viewDistance - 1000}>
+function Portfolio(): JSX.Element {
+    return <>
         <h2><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
         C++ Library for Discord. I'm the author of this library.
         <a href="https://yourwaifu.dev/sleepy-discord/">More info here.</a>
@@ -515,6 +516,12 @@ function PortfolioContent(): JSX.Element {
         <a href="https://github.com/yourWaifu">See my Github Profile</a>
         <h2><a href="https://yourwaifu.dev/is-your-waifu-legal/">Is Your Waifu Legal</a></h2>
         Website listing the ages of people in anime and video games
+    </>
+}
+
+function PortfolioContent(): JSX.Element {
+    return <Page positionZ={baseCameraZ - viewDistance - 1000}>
+        <Portfolio />
     </Page>
 }
 
@@ -576,14 +583,33 @@ function PostProcess() {
     </EffectComposer>
 }
 
+type AllPostData = {
+    data: string,
+    title: string,
+    id: string,
+    date: string,
+}[];
+
 type HomeProps = {
-    allPostsData: {
-        data: string,
-        title: string,
-        id: string,
-        date: string,
-    }[]
+    allPostsData: AllPostData;
 };
+
+type ArticlesListProps = {
+    allPostsData: AllPostData;
+    LinkComponent: (props:{href: string, children: React.ReactNode}) => JSX.Element;
+}
+
+function ArticlesList(props: ArticlesListProps) {
+    return <>
+        {props.allPostsData.map((data) => (<div key={data.id}>
+            <props.LinkComponent href={`/posts/${data.id}`}>
+                <a>{data.title}</a>
+            </props.LinkComponent>
+            &nbsp;{getPostDateStr(data.date)}
+            <br/>
+        </div>))}
+    </>
+}
 
 function ThreeDeHome({
     allPostsData
@@ -697,17 +723,11 @@ function ThreeDeHome({
                 <ContactContent />
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
                     <div style={{textShadow: "2px 2px 5px black"}}>
-                        {allPostsData.map((data) => (
-                            <div key={data.id}>
-                                <PageLink href={`/posts/${data.id}`} router={router}>
-                                    {data.title}
-                                </PageLink>
-                                &nbsp;{getPostDateStr(data.date)}
-                                <br />
-                            </div>
-                        ))}
+                        <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
+                            const forwardProps = { router: router, ...props };
+                            return <PageLink {...forwardProps} />
+                        }} />
                     </div>
-
                 </Page>
 
                 <fog attach="fog" args={[backgroundColor, 600, 1000]} />
@@ -761,18 +781,11 @@ export default function Home(props: HomeProps) {
                 <p>Couldn't display home page, using fail safe</p>
         }
         
-        <a href="https://github.com/yourWaifu">Github Profile</a>
+        <Portfolio />
         <h2>Contact</h2>
-        E-Mail: wuhao64@gmail.com
-        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+        <ContactInfo />
         <h2>Articles</h2>
-        {props.allPostsData.map((data) => (<div key={data.id}>
-            <Link href={`/posts/${data.id}`}>
-                <a>{data.title}</a>
-            </Link>
-            &nbsp;{getPostDateStr(data.date)}
-            <br/>
-        </div>))}
+        <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
     </Layout>
 }
 
