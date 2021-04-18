@@ -172,8 +172,13 @@ function Keyboard({}): JSX.Element {
     </group>
 }
 
-function CPU(): JSX.Element {
+function CPU({
+    mouse, gyro
+}:{
+    mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>
+}): JSX.Element {
     const group = useRef<THREE.Group>();
+    const light = useRef<THREE.Group>();
     const { nodes, materials } = useGLTF("/cpu.glb");
     
     const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
@@ -204,16 +209,42 @@ function CPU(): JSX.Element {
             let rotation = (group.current.rotation as THREE.Euler);
             rotation.y += delta * -0.05;
         }
+
+        if (light.current?.rotation) {
+            let rotation = (light.current.rotation as THREE.Euler);
+            let targetRotationX = rotation.x;
+            let targetRotationY = rotation.y;
+            if (gyro.current.available) {
+                targetRotationX = baseRotation.x + deg2Rad(gyro.current.beta);
+                targetRotationY = baseRotation.y - deg2Rad(gyro.current.gamma);
+            } else if (mouse.current?.available) {
+                targetRotationX = baseRotation.x - ((mouse.current.y / mouse.current.halfW)*(Math.PI/(4*2)));
+                targetRotationY = baseRotation.y + ((mouse.current.x / mouse.current.halfH)*(Math.PI/(4*2)));
+            }
+            //deltas to prevent crazy spinning
+            const deltaRotationX = Math.abs(rotation.z - targetRotationX);
+            const deltaRotationY = Math.abs(rotation.x - targetRotationY);
+            const deltaLimit = Math.PI / 4;
+            rotation.x = deltaRotationX < deltaLimit ? lerp(rotation.x, targetRotationX, delta * 3) : targetRotationX;
+            rotation.y = deltaRotationY < deltaLimit ? lerp(rotation.y, targetRotationX, delta * 3) : targetRotationY;
+        }
     });
 
-    return <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
-        <mesh
-            castShadow
-            receiveShadow
-            geometry={(nodes.CPU as THREE.Mesh).geometry}
-            material={materials['Material.001']}
-        />
-    </group>
+
+    return <>
+        <group ref={light} position={position} scale={scale}>
+            <pointLight position={[15, -2.5, 5]} />
+            <pointLight position={[-10, 0.5, 1]} />
+        </group>
+        <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
+            <mesh
+                castShadow
+                receiveShadow
+                geometry={(nodes.CPU as THREE.Mesh).geometry}
+                material={materials['Material.001']}
+            />
+        </group>
+    </>
 }
 
 function Paragraph({ }) {
@@ -433,6 +464,14 @@ function FrontContent({
     </>;
 }
 
+function ContactInfo(): JSX.Element {
+    return <>
+        <h2>Hao Qi Wu</h2>
+        <p>E-Mail: wuhao64@gmail.com</p>
+        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+    </>;
+}
+
 function ContactContent(): JSX.Element {
     const aspect = useThree(state => state.viewport.aspect);
     const getStyle = ():React.CSSProperties => {
@@ -459,9 +498,7 @@ function ContactContent(): JSX.Element {
                     flexShrink: 1,
                 }}>
                 <div>
-                    <h2>Hao Qi Wu</h2>
-                    <p>E-Mail: wuhao64@gmail.com</p>
-                    <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+                    <ContactInfo />
                 </div>
             </div>
             <div style={{ flexBasis: "50%" }} />
@@ -649,7 +686,7 @@ function ThreeDeHome({
                     <Cup />
                 </Suspense>
                 <Suspense fallback={null}>
-                    <CPU />
+                    <CPU mouse={mouse} gyro={gyro}/>
                 </Suspense>
                 <Suspense fallback={null}>
                     <Keyboard />
@@ -659,7 +696,11 @@ function ThreeDeHome({
                 <PortfolioContent />
                 <ContactContent />
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                    <div style={{textShadow: "2px 2px 1px black"}}>
+                    <div style={{textShadow: (
+                        "0px 3px 1px -2px rgb(0 0 0 / 20%)," +
+                        "0px 2px 2px 0px rgb(0 0 0 / 14%)," +
+                        "0px 1px 5px 0px rgb(0 0 0 / 12%)"
+                    )}}>
                         {allPostsData.map((data) => (
                             <div key={data.id}>
                                 <PageLink href={`/posts/${data.id}`} router={router}>
