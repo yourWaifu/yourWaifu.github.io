@@ -229,6 +229,10 @@ a:hover {
 	display: none;
 }
 
+pre {
+	overflow-y: auto;
+}
+
 @media screen and (max-width: 37em) {
 	.feature-a-text {
 		font-size: calc(1em / 3 * 2);
