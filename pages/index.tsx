@@ -391,7 +391,8 @@ function useJumpLinks(router: NextRouter) {
     const onClickJump: (id: string) => React.MouseEventHandler<HTMLAnchorElement> = (id) => {
         return (e) => {
             e.preventDefault();
-            window.history.state.as = `/#${id}`;
+            //fixes issue where Next.js rerenders the site during transitions
+            window.history.state.as = `/#${id}`; //by hacking Next.js's history states
             window.history.pushState(window.history.state, "", `/#${id}`);
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const element = document.getElementById(id);
@@ -456,9 +457,9 @@ function FrontContent({
                     maxWidth: "37em",
                     margin: "auto",
                 }}>
-                    <JumpLink id={"contact"}><h3>Contact</h3></JumpLink>
-                    <JumpLink id={"portfolio"}><h3>Portfolio</h3></JumpLink>
-                    <JumpLink id={"articles"}><h3>Articles</h3></JumpLink>
+                    <JumpLink id={"contact"}><h4>Contact</h4></JumpLink>
+                    <JumpLink id={"portfolio"}><h4>Portfolio</h4></JumpLink>
+                    <JumpLink id={"articles"}><h4>Articles</h4></JumpLink>
                 </div>
                 <div style={{flexGrow: 1}}></div>
             </div>
@@ -532,7 +533,7 @@ const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((props, ref
     const JumpLink = useJumpLinks(props.router);
 
     return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
-        <JumpLink id={"front"}>Home</JumpLink>
+        <JumpLink id={"front"}><p>Home</p></JumpLink>
     </div>;
 });
 
