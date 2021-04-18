@@ -260,7 +260,6 @@ function PageLink({children, href, router}:{
 }): JSX.Element {
     const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
         e.preventDefault();
-        console.log(router);
         router.push(href);
     }
     return (
@@ -374,7 +373,7 @@ function Page({
     </Html>
 }
 
-function useJumpLinks() {
+function useJumpLinks(router: NextRouter) {
     type JumpLinkProps = {
         id: string, children: React.ReactNode
     };
@@ -388,10 +387,12 @@ function useJumpLinks() {
             document.documentElement.scrollTop = e.z;
         }
     });
+    spring.z.stop(); //stop auto play
     const onClickJump: (id: string) => React.MouseEventHandler<HTMLAnchorElement> = (id) => {
         return (e) => {
             e.preventDefault();
-            history.pushState({}, "", `#${id}`);
+            window.history.state.as = `/#${id}`;
+            window.history.pushState(window.history.state, "", `/#${id}`);
             const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
             const element = document.getElementById(id);
             const displacement = element?.getBoundingClientRect().top;
@@ -419,11 +420,12 @@ function useJumpLinks() {
 }
 
 function FrontContent({
-    backButtonRef
+    backButtonRef, router
 }:{
-    backButtonRef: React.MutableRefObject<HTMLDivElement>
+    backButtonRef: React.MutableRefObject<HTMLDivElement>,
+    router: NextRouter,
 }): JSX.Element {
-    const JumpLink = useJumpLinks();
+    const JumpLink = useJumpLinks(router);
     const camera = useThree(state => state.camera);
     const positionZ = baseCameraZ - viewDistance;
 
@@ -525,9 +527,9 @@ function PortfolioContent(): JSX.Element {
     </Page>
 }
 
-type BackButtonProps = { };
-const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((_, ref): JSX.Element => {
-    const JumpLink = useJumpLinks();
+type BackButtonProps = { router: NextRouter };
+const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((props, ref): JSX.Element => {
+    const JumpLink = useJumpLinks(props.router);
 
     return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
         <JumpLink id={"front"}>Home</JumpLink>
@@ -718,7 +720,7 @@ function ThreeDeHome({
                     <Keyboard />
                 </Suspense>
 
-                <FrontContent backButtonRef={backButtonRef} />
+                <FrontContent backButtonRef={backButtonRef} router={router} />
                 <PortfolioContent />
                 <ContactContent />
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
@@ -736,7 +738,7 @@ function ThreeDeHome({
                 <AutoFOV />
                 <CameraPath />
             </Canvas>
-            <BackButton ref={backButtonRef} />
+            <BackButton ref={backButtonRef} router={router} />
         </div>
         <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
             <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
