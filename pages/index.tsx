@@ -188,6 +188,8 @@ function CPU({
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
     const position = new THREE.Vector3(baseScale * 0.10, baseScale * 0, -1600);
+    let material = materials['Material.001'];
+    material.dithering = true;
 
     const aspect = useThree(state => state.viewport.aspect);
     useEffect(() => {
@@ -244,7 +246,7 @@ function CPU({
                 castShadow
                 receiveShadow
                 geometry={(nodes.CPU as THREE.Mesh).geometry}
-                material={materials['Material.001']}
+                material={material}
             />
         </group>
     </>
