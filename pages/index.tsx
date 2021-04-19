@@ -110,7 +110,7 @@ function Cup({}): JSX.Element {
         let position = (group.current.position as THREE.Vector3);
         if (aspect < 1) {
             position.x = baseScale * 0.28;
-            position.y = baseScale * -0.12;
+            position.y = baseScale * -0.03;
         } else {
             position.x = baseScale * 0.3;
             position.y = baseScale * 0;
@@ -468,10 +468,12 @@ function FrontContent({
 }
 
 function ContactInfo(): JSX.Element {
+
     return <>
         E-Mail: wuhao64@gmail.com <br />
+        <a href={"https://github.com/yourWaifu"}>GitHub profile</a> <br />
         <a href={"https://www.linkedin.com/in/hao-qi-wu"}>LinkedIn profile</a><br />
-        <a href={"https://discord.com/users/99259409045143552"}>Discord: Sleepy Flower Girl</a>
+        <a href={"https://discord.com/users/99259409045143552"}>Discord profile</a>
     </>;
 }
 
@@ -510,21 +512,26 @@ function ContactContent(): JSX.Element {
     </Page>;
 }
 
-function Portfolio(): JSX.Element {
+function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
+    let style: React.CSSProperties = {};
+    if (removeMargins) {
+        style = {marginTop: 0}
+    }
     return <>
-        <h2><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
-        C++ Library for Discord. I'm the author of this library.
-        <a href="https://yourwaifu.dev/sleepy-discord/">More info here.</a>
-        <h2>Contributions to Open Source</h2>
-        <a href="https://github.com/yourWaifu">See my Github Profile</a>
-        <h2><a href="https://yourwaifu.dev/is-your-waifu-legal/">Is Your Waifu Legal</a></h2>
-        Website listing the ages of people in anime and video games
+        <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
+        I made a C++ Library for Discord <br />
+        <h2>Video Games</h2>
+        Game engine with V8 JavaScript. <br />
+        Mods for Dota 2.
+        <h2><a href="https://github.com/yourWaifu">Contributions to Open Source</a></h2>
+        Added UI features to the Dolphin Emulator. <br />
+        Fixed issues with libraries for Discord. <br />
     </>
 }
 
 function PortfolioContent(): JSX.Element {
     return <Page positionZ={baseCameraZ - viewDistance - 1000}>
-        <Portfolio />
+        <Portfolio removeMargins={true}/>
     </Page>
 }
 
