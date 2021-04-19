@@ -527,7 +527,7 @@ function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
         I made a C++ Library for Discord <br />
         <h2>Video Games</h2>
         <div>
-            <div style={{float: "right", width: "25vw", height:"2.5em"}}></div>
+            <div style={{float: "right", width: "25%", height:"2.5em"}}></div>
             Game engine with V8 JavaScript. <br />
             Mods for Dota 2.
         </div>
