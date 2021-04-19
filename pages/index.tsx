@@ -98,6 +98,9 @@ function Cup({}): JSX.Element {
     
     const mesh = (gltf.nodes.cup as THREE.Mesh);
     const baseRotation = new THREE.Euler(1.627387, -0.65587553, 2.171643);
+    let material = gltf.materials['Material.001'];
+
+    material.dithering = true; //fixes color banding issues
 
     const scaleFactor = 0.043026 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
@@ -110,7 +113,7 @@ function Cup({}): JSX.Element {
         let position = (group.current.position as THREE.Vector3);
         if (aspect < 1) {
             position.x = baseScale * 0.28;
-            position.y = baseScale * -0.03;
+            position.y = baseScale * -0.05;
         } else {
             position.x = baseScale * 0.3;
             position.y = baseScale * 0;
@@ -129,7 +132,7 @@ function Cup({}): JSX.Element {
     });
 
     return <group ref={group} rotation={baseRotation} scale={scale} position={position} dispose={null}>
-        <mesh castShadow receiveShadow geometry={(gltf.nodes.cup as THREE.Mesh).geometry} material={gltf.materials['Material.001']} />
+        <mesh castShadow receiveShadow geometry={(gltf.nodes.cup as THREE.Mesh).geometry} material={material} />
     </group>
 }
 
