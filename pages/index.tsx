@@ -113,7 +113,7 @@ function Cup({}): JSX.Element {
         let position = (group.current.position as THREE.Vector3);
         if (aspect < 1) {
             position.x = baseScale * 0.28;
-            position.y = baseScale * -0.05;
+            position.y = baseScale * 0.1;
         } else {
             position.x = baseScale * 0.3;
             position.y = baseScale * 0;
@@ -526,8 +526,11 @@ function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
         <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
         I made a C++ Library for Discord <br />
         <h2>Video Games</h2>
-        Game engine with V8 JavaScript. <br />
-        Mods for Dota 2.
+        <div>
+            <div style={{float: "right", width: "25vw", height:"2.5em"}}></div>
+            Game engine with V8 JavaScript. <br />
+            Mods for Dota 2.
+        </div>
         <h2><a href="https://github.com/yourWaifu">Contributions to Open Source</a></h2>
         Added UI features to the Dolphin Emulator. <br />
         Fixed issues with libraries for Discord. <br />
