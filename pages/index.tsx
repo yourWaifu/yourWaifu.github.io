@@ -623,7 +623,7 @@ function ArticlesList(props: ArticlesListProps) {
             <props.LinkComponent href={`/posts/${data.id}`}>
                 <a>{data.title}</a>
             </props.LinkComponent>
-            &nbsp;{getPostDateStr(data.date)}
+            &nbsp;<div style={{float: "right"}}>{getPostDateStr(data.date)}</div>
             <br/>
         </div>))}
     </>
@@ -786,24 +786,26 @@ export default function Home(props: HomeProps) {
             <title>Hao Qi Wu</title>
         </Head>
         {(canUseWebGL === true) && <ThreeDeHome {...props}/>}
-        <h1>Hao Qi Wu</h1>
-        {
-            canUseWebGL === null ?
-                <p>Please enable JavaScript to view the home page</p>
-            : canUseWebGL === false ? 
-                <p>
-                    Please enable WebGL or use a browser with it enabled to view the home page.
-                    Visit <a href="https://get.webgl.org/">https://get.webgl.org/</a> for more info.
-                </p>
-            :
-                <p>Couldn't display home page, using fail safe</p>
-        }
-        
-        <Portfolio />
-        <h2>Contact</h2>
-        <ContactInfo />
-        <h2>Articles</h2>
-        <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
+        <div style={{maxWidth: "37em", padding: "0 1em", margin: "auto"}}>
+            <h1>Hao Qi Wu</h1>
+            {
+                canUseWebGL === null ?
+                    <p>Please enable JavaScript to view the home page</p>
+                : canUseWebGL === false ? 
+                    <p>
+                        Please enable WebGL or use a browser with it enabled to view the home page.
+                        Visit <a href="https://get.webgl.org/">https://get.webgl.org/</a> for more info.
+                    </p>
+                :
+                    <p>Couldn't display home page, using fail safe</p>
+            }
+            
+            <Portfolio />
+            <h2>Contact</h2>
+            <ContactInfo />
+            <h2>Articles</h2>
+            <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
+        </div>
     </Layout>
 }
 
