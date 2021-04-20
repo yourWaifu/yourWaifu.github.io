@@ -124,7 +124,7 @@ function Cup({}): JSX.Element {
             position.x = baseScale * 0.3;
             position.y = baseScale * 0;
         }
-    }, [aspect]);
+    });
 
     useFrame((_, delta) => {
         if (!group.current)
@@ -211,7 +211,7 @@ function CPU({
             position.y = baseScale * 0;
             position.z = -1600;
         }
-    }, [aspect]);
+    });
 
     useFrame((_, delta) => {
         if (!group.current)
