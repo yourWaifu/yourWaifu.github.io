@@ -651,15 +651,17 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
         screenSpring.op.start({to});
     }
 
-    useEffect(() => {
+    const softlockCheck = () => {
         if (isLoading.current === false && screenSpring.op.goal !== end) {
             //keeps the website from soft-locking
             setTimeout(() => {
                 screenSpring.op.start({to: end});
             }, 200)
         }
-    });
-    useFadeOut(screenSpring.op, 1, router);
+    }
+
+    useEffect(softlockCheck);
+    useFadeOut(screenSpring.op, 0, 1, router);
 
     return <div ref={element} style={{
         backgroundColor: backgroundColor,
@@ -868,7 +870,7 @@ function FadeStaticContent(props: StaticContentProps) {
     let content = useRef<HTMLDivElement>(null!);
     let spring = useFadeIn(content);
     const router = useRouter();
-    useFadeOut(spring.op, 0, router);
+    useFadeOut(spring.op, 1, 0, router);
 
     return <div ref={content}>
         <StaticContent {...props} />
