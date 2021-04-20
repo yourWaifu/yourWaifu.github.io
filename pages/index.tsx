@@ -525,8 +525,9 @@ function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
     return <>
         <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
         I made a C++ Library for Discord <br />
-        <h2>Video Games</h2>
+        <h2><a href="https://www.heavyeyedgames.com/">Video Games</a></h2>
         <div>
+            {/**Floatin element to keep the text from overlapping with the cup */}
             <div style={{float: "right", width: "25%", height:"2.5em"}}></div>
             Game engine with V8 JavaScript. <br />
             Mods for Dota 2.
@@ -548,7 +549,7 @@ const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((props, ref
     const JumpLink = useJumpLinks(props.router);
 
     return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
-        <JumpLink id={"front"}><p>Home</p></JumpLink>
+        <JumpLink id={"front"}><p>HOME</p></JumpLink>
     </div>;
 });
 
