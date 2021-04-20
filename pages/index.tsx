@@ -652,7 +652,7 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
     }
 
     useEffect(() => {
-        if (isLoading.current === false) {
+        if (isLoading.current === false && screenSpring.op.goal !== end) {
             //keeps the website from soft-locking
             setTimeout(() => {
                 screenSpring.op.start({to: end});
