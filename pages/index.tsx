@@ -38,10 +38,15 @@ interface MouseOverData {x: number, y: number, halfW: number, halfH: number, ava
 interface GyroData {beta: number, gamma: number, available?: boolean, center: { beta: number, gamma: number } }
 
 function Sig({
-    mouse, gyro
+    mouse, gyro, fadeTransitionRef
 }:{
-    mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>
+    mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>, fadeTransitionRef: React.MutableRefObject<FadeTransition>
 }): JSX.Element {
+    useEffect(() => {
+        if (fadeTransitionRef.current)
+            fadeTransitionRef.current();
+    }, [])
+
     const group = useRef<GroupProps>();
     const gltf = useLoader(GLTFLoader, '/sig.glb');
     const material = new THREE.MeshBasicMaterial({ color: new THREE.Color('white') });
@@ -258,14 +263,17 @@ function Paragraph({ }) {
 
 //for some reason Next Link doesn't work so this is a work around by using a router hook
 //from outside the canvas.
-function PageLink({children, href, router}:{
+function PageLink({children, href, router, fadeTransitionRef}:{
     children: React.ReactNode,
-    href: string;
-    router: NextRouter;
+    href: string,
+    router: NextRouter
+    fadeTransitionRef: React.MutableRefObject<FadeTransition>,
 }): JSX.Element {
     const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
         e.preventDefault();
-        router.push(href);
+        if (fadeTransitionRef.current)
+            fadeTransitionRef.current(true);
+            router.push(href);
     }
     return (
         <a href={href} onClick={handleClick}>{children}</a>
@@ -429,7 +437,7 @@ function FrontContent({
     backButtonRef, router
 }:{
     backButtonRef: React.MutableRefObject<HTMLDivElement>,
-    router: NextRouter,
+    router: NextRouter
 }): JSX.Element {
     const JumpLink = useJumpLinks(router);
     const camera = useThree(state => state.camera);
@@ -559,7 +567,6 @@ function AdaptivePixelRatio() {
     useFrame(() => {
         if (oldCurrent != performance.current) {
             setPixelRatio(performance.current * window.devicePixelRatio);
-            console.log("update res");
         }
         oldCurrent = performance.current;
     });
@@ -601,6 +608,62 @@ function PostProcess() {
     </EffectComposer>
 }
 
+type FadeTransition = (flip?: boolean) => void;
+function FadeFromEffect({backgroundColor, transitionRef}: {
+    backgroundColor: string, transitionRef: React.MutableRefObject<FadeTransition>
+}) {
+    let element = useRef<HTMLDivElement>(null!);
+    const start = 1000;
+    const end = 0;
+    const springs = Array.from(Array(2), (_, i) => (useSpring<{op: number}>({
+        from: {op: start},
+        to: {op: start},
+        onChange: (e) => {
+            if (!element)
+                return;
+            element.current.style.opacity = String(e.op / start);
+        }
+    })));
+    const screenSpring = springs[0];
+    const textSpring = springs[1];
+
+    screenSpring.op.stop();
+    transitionRef.current = (flip?: boolean) => {
+        const {from, to} = !flip ?
+            {from: start, to: end} : {from: end, to: start};
+        screenSpring.op.set(from);
+        screenSpring.op.start({to});
+    }
+
+    useEffect(() => {
+        let fadeToLoading = () => {
+            screenSpring.op.start({to: start});
+        };
+        window.addEventListener("beforeunload", fadeToLoading);
+        return () => {
+            window.removeEventListener('beforeunload', fadeToLoading);
+        }
+    })
+
+    return <div ref={element} style={{
+        backgroundColor: backgroundColor,
+        width: "100vw", height: "100vh",
+        opacity: 1,
+        zIndex: 9999999999999,
+        pointerEvents: "none",
+        position: "fixed",
+        top: 0, left: 0,
+        textAlign: "center",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    }}>
+        <p>
+            LOADING
+        </p>
+    </div>
+}
+
 type AllPostData = {
     data: string,
     title: string,
@@ -621,7 +684,7 @@ function ArticlesList(props: ArticlesListProps) {
     return <>
         {props.allPostsData.map((data) => (<div key={data.id}>
             <props.LinkComponent href={`/posts/${data.id}`}>
-                <a>{data.title}</a>
+                {data.title}
             </props.LinkComponent>
             &nbsp;<div style={{float: "right"}}>{getPostDateStr(data.date)}</div>
             <br/>
@@ -699,6 +762,7 @@ function ThreeDeHome({
     }, []);
 
     let backButtonRef = useRef<HTMLDivElement>(null!);
+    let fadeTransitionRef = useRef<FadeTransition>(null!);
 
     return <>
         <div
@@ -724,7 +788,7 @@ function ThreeDeHome({
                 <ambientLight intensity={0.5} />
 
                 <Suspense fallback={loadingElement}>
-                    <Sig mouse={mouse} gyro={gyro} />
+                    <Sig mouse={mouse} gyro={gyro} fadeTransitionRef={fadeTransitionRef} />
                 </Suspense>
                 <Suspense fallback={null}>
                     <Cup />
@@ -742,7 +806,7 @@ function ThreeDeHome({
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
                     <div style={{textShadow: "2px 2px 5px black"}}>
                         <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
-                            const forwardProps = { router: router, ...props };
+                            const forwardProps = { router, fadeTransitionRef, ...props };
                             return <PageLink {...forwardProps} />
                         }} />
                     </div>
@@ -755,6 +819,7 @@ function ThreeDeHome({
                 <CameraPath />
             </Canvas>
             <BackButton ref={backButtonRef} router={router} />
+            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef}/>
         </div>
         <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
             <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
