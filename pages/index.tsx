@@ -14,10 +14,11 @@ import state from '../lib/store' //metadata about the content on index
 import { Block, useBlock } from '../components/blocks' //system for splitting content into blocks that fill the screen
 import { GroupProps } from '@react-three/fiber/dist/declarations/src/three-types'
 import lerp from '../lib/lerp' //common linear interpolation
-import { useSpring } from 'react-spring'
+import { SpringValue, useSpring } from 'react-spring'
 import { EffectComposer, DepthOfField, Bloom, SSAO } from '@react-three/postprocessing'
 import ReactDOM from 'react-dom'
 import { PerspectiveCamera } from 'three'
+import { useFadeOut } from '../lib/fade-out'
 
 const baseCameraZ = 500;
 const viewDistance = 500;
@@ -263,17 +264,14 @@ function Paragraph({ }) {
 
 //for some reason Next Link doesn't work so this is a work around by using a router hook
 //from outside the canvas.
-function PageLink({children, href, router, fadeTransitionRef}:{
+function PageLink({children, href, router}:{
     children: React.ReactNode,
     href: string,
     router: NextRouter
-    fadeTransitionRef: React.MutableRefObject<FadeTransition>,
 }): JSX.Element {
     const handleClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
         e.preventDefault();
-        if (fadeTransitionRef.current)
-            fadeTransitionRef.current(true);
-            router.push(href);
+        router.push(href);
     }
     return (
         <a href={href} onClick={handleClick}>{children}</a>
@@ -608,24 +606,42 @@ function PostProcess() {
     </EffectComposer>
 }
 
+function useFadeIn(element: React.MutableRefObject<HTMLDivElement>, options?: {delay?: number}) {
+    return useSpring<{op: number}>({
+        from: {op: 0},
+        to: {op: 1},
+        delay: options?.delay,
+        onChange: (e) => {
+            if (!element.current)
+                return;
+            element.current.style.opacity = String(e.op);
+        }
+    });
+}
+
+
 type FadeTransition = (flip?: boolean) => void;
-function FadeFromEffect({backgroundColor, transitionRef}: {
-    backgroundColor: string, transitionRef: React.MutableRefObject<FadeTransition>
+function FadeFromEffect({backgroundColor, transitionRef, router}: {
+    backgroundColor: string, transitionRef: React.MutableRefObject<FadeTransition>,
+    router: NextRouter
 }) {
     let element = useRef<HTMLDivElement>(null!);
-    const start = 1000;
+    let LoadingText = useRef<HTMLDivElement>(null!);
+    let isLoading = useRef<boolean>(true);
+    const start = 1;
     const end = 0;
-    const springs = Array.from(Array(2), (_, i) => (useSpring<{op: number}>({
+    const screenSpring = useSpring<{op: number}>({
         from: {op: start},
-        to: {op: start},
+        onRest: () => {
+            isLoading.current = false;
+        },
         onChange: (e) => {
-            if (!element)
+            if (!element.current)
                 return;
-            element.current.style.opacity = String(e.op / start);
+            element.current.style.opacity = String(e.op);
         }
-    })));
-    const screenSpring = springs[0];
-    const textSpring = springs[1];
+    });
+    useFadeIn(LoadingText, {delay: 200});
 
     screenSpring.op.stop();
     transitionRef.current = (flip?: boolean) => {
@@ -636,14 +652,14 @@ function FadeFromEffect({backgroundColor, transitionRef}: {
     }
 
     useEffect(() => {
-        let fadeToLoading = () => {
-            screenSpring.op.start({to: start});
-        };
-        window.addEventListener("beforeunload", fadeToLoading);
-        return () => {
-            window.removeEventListener('beforeunload', fadeToLoading);
+        if (isLoading.current === false) {
+            //keeps the website from soft-locking
+            setTimeout(() => {
+                screenSpring.op.start({to: end});
+            }, 200)
         }
-    })
+    });
+    useFadeOut(screenSpring.op, 1, router);
 
     return <div ref={element} style={{
         backgroundColor: backgroundColor,
@@ -658,7 +674,7 @@ function FadeFromEffect({backgroundColor, transitionRef}: {
         alignItems: "center",
         justifyContent: "center",
     }}>
-        <p>
+        <p ref={LoadingText} style={{opacity: 0}}>
             LOADING
         </p>
     </div>
@@ -806,7 +822,7 @@ function ThreeDeHome({
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
                     <div style={{textShadow: "2px 2px 5px black"}}>
                         <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
-                            const forwardProps = { router, fadeTransitionRef, ...props };
+                            const forwardProps = { router, ...props };
                             return <PageLink {...forwardProps} />
                         }} />
                     </div>
@@ -819,7 +835,7 @@ function ThreeDeHome({
                 <CameraPath />
             </Canvas>
             <BackButton ref={backButtonRef} router={router} />
-            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef}/>
+            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router}/>
         </div>
         <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
             <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
@@ -845,6 +861,18 @@ function StaticContent(props: StaticContentProps) {
         <h2>Articles</h2>
         <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
     </div>;
+}
+
+//to do make this site wide
+function FadeStaticContent(props: StaticContentProps) {
+    let content = useRef<HTMLDivElement>(null!);
+    let spring = useFadeIn(content);
+    const router = useRouter();
+    useFadeOut(spring.op, 0, router);
+
+    return <div ref={content}>
+        <StaticContent {...props} />
+    </div>
 }
 
 export default function Home(props: HomeProps) {
@@ -881,12 +909,12 @@ export default function Home(props: HomeProps) {
         ...props
     }
 
-    const errorContent = hasJavaScript ?
+    const errorContent = !hasJavaScript ?
         <noscript>
             <StaticContent {...staticContentProps} />
         </noscript>
     :
-        <StaticContent {...staticContentProps} />
+        <FadeStaticContent {...staticContentProps} />
     ;
         
 
@@ -894,11 +922,7 @@ export default function Home(props: HomeProps) {
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
-        {(canUseWebGL === true) &&
-            <Suspense fallback={null}>
-                <ThreeDeHome {...props}/>
-            </Suspense>
-        }
+        {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
         {errorContent}
     </Layout>
 }
