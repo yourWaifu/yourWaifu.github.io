@@ -917,7 +917,7 @@ export default function Home(props: HomeProps) {
                 hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
             }
     
-            setUseWebGL(false);
+            setUseWebGL(hasWebGL);
         }
     }, []);
 
