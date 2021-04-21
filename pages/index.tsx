@@ -804,7 +804,8 @@ function ThreeDeHome({
 
     return <div ref={scroll} style={{
         position: "absolute", top: 0, bottom: 0, left: 0, right: -20,
-        minWidth: "100%", overflowY: "scroll", display: "flex", flexDirection: "row"
+        minWidth: "100%", overflowY: "scroll", display: "flex", flexDirection: "row",
+        overflowX: "hidden",
     }}>
         <div
             onMouseMove={onMouseMove}
