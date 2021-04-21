@@ -889,6 +889,7 @@ function StaticContent(props: StaticContentProps) {
         <ContactInfo />
         <h2>Articles</h2>
         <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
+        <div style={{height: "1em"}} />
     </div>;
 }
 
@@ -916,7 +917,7 @@ export default function Home(props: HomeProps) {
                 hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
             }
     
-            setUseWebGL(hasWebGL);
+            setUseWebGL(false);
         }
     }, []);
 
@@ -946,12 +947,12 @@ export default function Home(props: HomeProps) {
         <FadeStaticContent {...staticContentProps} />
     ;
         
-
+    //create a fixed position to prevent overflow
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
-        <div style={{width: "100%", overflowX: "hidden"}}>
+        <div style={{width: "100vw", height: "100vh", position: "fixed"}}>
             {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
             {errorContent}
         </div>
