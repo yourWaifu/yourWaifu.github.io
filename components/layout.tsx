@@ -33,7 +33,7 @@ export default function BlogLayout(
         <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main>{children}</main>
+      <main style={{top: 0, left: 0, right: 0, bottom: 0, position: "absolute"}}>{children}</main>
     </>
   );
 }

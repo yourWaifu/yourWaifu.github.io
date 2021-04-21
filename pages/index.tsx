@@ -384,18 +384,21 @@ function Page({
     </Html>
 }
 
-function useJumpLinks(router: NextRouter) {
+type ScrollHandler = {
+    y: number
+};
+
+function useJumpLinks(scroll: ScrollHandler) {
     type JumpLinkProps = {
         id: string, children: React.ReactNode
     };
     const spring = useSpring<{z: number}>({
-        from: {z: document.documentElement.scrollTop},
+        from: {z: scroll.y},
         onRest: (result) => {
-            document.body.scrollTo(0, result.value.z);
-            document.documentElement.scrollTo(0, result.value.z);
+            scroll.y = result.value.z;
         },
         onChange: (e) => {
-            document.documentElement.scrollTop = e.z;
+            scroll.y = e.z;
         }
     });
     spring.z.stop(); //stop auto play
@@ -405,7 +408,7 @@ function useJumpLinks(router: NextRouter) {
             //fixes issue where Next.js rerenders the site during transitions
             window.history.state.as = `/#${id}`; //by hacking Next.js's history states
             window.history.pushState(window.history.state, "", `/#${id}`);
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollTop = scroll.y;
             const element = document.getElementById(id);
             const displacement = element?.getBoundingClientRect().top;
             if (displacement === undefined)
@@ -432,12 +435,12 @@ function useJumpLinks(router: NextRouter) {
 }
 
 function FrontContent({
-    backButtonRef, router
+    backButtonRef, scroll
 }:{
     backButtonRef: React.MutableRefObject<HTMLDivElement>,
-    router: NextRouter
+    scroll: ScrollHandler
 }): JSX.Element {
-    const JumpLink = useJumpLinks(router);
+    const JumpLink = useJumpLinks(scroll);
     const camera = useThree(state => state.camera);
     const positionZ = baseCameraZ - viewDistance;
 
@@ -549,9 +552,9 @@ function PortfolioContent(): JSX.Element {
     </Page>
 }
 
-type BackButtonProps = { router: NextRouter };
+type BackButtonProps = { scroll: ScrollHandler };
 const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((props, ref): JSX.Element => {
-    const JumpLink = useJumpLinks(props.router);
+    const JumpLink = useJumpLinks(props.scroll);
 
     return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
         <JumpLink id={"front"}><p>HOME</p></JumpLink>
@@ -589,11 +592,10 @@ function AutoFOV() {
     return null;
 }
 
-function CameraPath({}:{}) {
+function CameraPath({scroll}:{scroll: ScrollHandler}) {
     const camera = useThree(state => state.camera);
     useFrame(() => {
-        let scrollPos = document.body.scrollTop || document.documentElement.scrollTop;
-        camera.position.z = baseCameraZ - (scrollPos);
+        camera.position.z = baseCameraZ - scroll.y;
     });
     return null;
 }
@@ -782,18 +784,41 @@ function ThreeDeHome({
     let backButtonRef = useRef<HTMLDivElement>(null!);
     let fadeTransitionRef = useRef<FadeTransition>(null!);
 
-    return <>
+    let scroll = useRef<HTMLDivElement>(null!);
+    useEffect(() => {
+        if (!scroll.current)
+            return;
+        const stopEvent = (e) => {e.stopPropagation();};
+        document.body.style.overflow = "hidden";
+        return () => {
+            document.body.style.overflow = "unset";
+        }
+    }, []);
+    const scrollHandler: ScrollHandler = {
+        get y(): number {
+            return scroll.current?.scrollTop || document.documentElement.scrollTop;
+        },
+        set y(value: number) {
+            scroll.current?.scrollTo(0, value);
+        }
+    }
+
+    return <div ref={scroll} style={{
+        position: "absolute", top: 0, bottom: 0, left: 0, right: -20,
+        minWidth: "100%", overflowY: "scroll", display: "flex", flexDirection: "row"
+    }}>
         <div
             onMouseMove={onMouseMove}
             style={{
                 height: "100vh",
-                width: "100%",
-                position: "fixed",
+                width: "100vw",
+                position: "sticky",
                 zIndex: 2,
                 top: 0,
                 left: 0,
-                right: 0,
                 backgroundColor: backgroundColor,
+                flexShrink: 0,
+                flexGrow: 0,
             }}
         >
             <Canvas
@@ -812,17 +837,17 @@ function ThreeDeHome({
                     <Cup />
                 </Suspense>
                 <Suspense fallback={null}>
-                    <CPU mouse={mouse} gyro={gyro}/>
+                    <CPU mouse={mouse} gyro={gyro} />
                 </Suspense>
                 <Suspense fallback={null}>
                     <Keyboard />
                 </Suspense>
 
-                <FrontContent backButtonRef={backButtonRef} router={router} />
+                <FrontContent backButtonRef={backButtonRef} scroll={scrollHandler} />
                 <PortfolioContent />
                 <ContactContent />
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                    <div style={{textShadow: "2px 2px 5px black"}}>
+                    <div style={{ textShadow: "2px 2px 5px black" }}>
                         <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
                             const forwardProps = { router, ...props };
                             return <PageLink {...forwardProps} />
@@ -834,18 +859,20 @@ function ThreeDeHome({
 
                 <AdaptivePixelRatio />
                 <AutoFOV />
-                <CameraPath />
+                <CameraPath scroll={scrollHandler} />
             </Canvas>
-            <BackButton ref={backButtonRef} router={router} />
-            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router}/>
+            <BackButton ref={backButtonRef} scroll={scrollHandler} />
+            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router} />
         </div>
-        <div style={{ width: "100%", height: "100%", position: "absolute", zIndex: -9, top: 0 }} >
+        <div style={{
+            top: 0, height: "100vh", position: "relative", flexGrow: 1, flexBasis: 1, flexShrink: 0, pointerEvents: "none"
+        }}>
             <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
             <div id={"portfolio"} style={{ height: "900px" }} /> {/* portfolio page */}
             <div id={"contact"} style={{ height: "800px" }} /> {/* contact page */}
             <div id={"articles"} style={{ height: "100%" }} /> {/* the last screen */}
         </div>
-    </>
+    </div>
 }
 
 interface StaticContentProps extends HomeProps {
@@ -872,7 +899,7 @@ function FadeStaticContent(props: StaticContentProps) {
     const router = useRouter();
     useFadeOut(spring.op, 1, 0, router);
 
-    return <div ref={content}>
+    return <div ref={content} style={{height: "100%", overflowY: "auto"}}>
         <StaticContent {...props} />
     </div>
 }
@@ -924,8 +951,8 @@ export default function Home(props: HomeProps) {
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
-        {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
-        {errorContent}
+            {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
+            {errorContent}
     </Layout>
 }
 
