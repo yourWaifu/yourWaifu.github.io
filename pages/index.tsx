@@ -788,7 +788,6 @@ function ThreeDeHome({
     useEffect(() => {
         if (!scroll.current)
             return;
-        const stopEvent = (e) => {e.stopPropagation();};
         document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "unset";
