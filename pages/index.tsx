@@ -951,8 +951,10 @@ export default function Home(props: HomeProps) {
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
+        <div style={{width: "100%", overflowX: "hidden"}}>
             {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
             {errorContent}
+        </div>
     </Layout>
 }
 
