@@ -600,6 +600,15 @@ function CameraPath({scroll}:{scroll: ScrollHandler}) {
     return null;
 }
 
+function FrameFunctions({functions, canvas}:{
+    functions: Array<React.MutableRefObject<(delta: number) => void>>,
+    canvas: React.MutableRefObject<HTMLCanvasElement>
+}) {
+    canvas.current = useThree(state => state.gl.domElement)
+    useFrame((r, delta) => functions.forEach((value) => value.current(delta)));
+    return null;
+}
+
 function PostProcess() {
     const height = useThree(state => state.viewport.height);
     const group = useRef<GroupProps>(null!);
@@ -667,12 +676,11 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
 
     return <div ref={element} style={{
         backgroundColor: backgroundColor,
-        width: "100vw", height: "100vh",
         opacity: 1,
         zIndex: 9999999999999,
         pointerEvents: "none",
         position: "fixed",
-        top: 0, left: 0,
+        inset: 0,
         textAlign: "center",
         display: "flex",
         alignItems: "center",
@@ -802,12 +810,49 @@ function ThreeDeHome({
         }
     }
 
-    return <div ref={scroll} style={{
+    //center canvas
+    let topRef = useRef<HTMLDivElement>(null!);
+    let bottomRef = useRef<HTMLDivElement>(null!);
+    let leftRef = useRef<HTMLDivElement>(null!);
+    let rightRef = useRef<HTMLDivElement>(null!);
+    let canvasContainer = useRef<HTMLDivElement>(null!);
+    let canvas = useRef<HTMLCanvasElement>(null!);
+    let centerFunction = useRef<(delta:number) => void>((delta:number)=>{});
+    let canvasTransformY = 0;
+    useEffect(() => {
+        if (!topRef.current || !bottomRef.current || !canvasContainer.current)
+            return;
+        centerFunction.current = (delta:number) => {
+            if (!canvas.current.parentElement)
+                return;
+            const viewportTop = topRef.current.getBoundingClientRect().top;
+            const viewportBottom = bottomRef.current.getBoundingClientRect().bottom;
+            const viewportCenterY = (viewportTop + viewportBottom) / 2;
+            const canvasRect = canvasContainer.current.getBoundingClientRect();
+            const canvasCenterY = (canvasRect.top + canvasRect.bottom) / 2;
+            const transformGoalY =  viewportCenterY - canvasCenterY;
+            if (transformGoalY !== canvasTransformY)
+                canvas.current.parentElement.style.top = `${transformGoalY}px`;
+            canvasTransformY = transformGoalY;
+        }
+    }, []);
+
+    return <>
+    <BackButton ref={backButtonRef} scroll={scrollHandler} />
+    {/**Get available space on screen */}
+    <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router} />
+    <div ref={topRef} style={{position: "fixed", top: 0}} />
+    <div ref={bottomRef} style={{position: "fixed", bottom: 0}} />
+    <div ref={leftRef} style={{position: "fixed", left: 0}} />
+    <div ref={rightRef} style={{position: "fixed", right: 0}} />
+
+    <div ref={scroll} style={{
         position: "absolute", top: 0, bottom: 0, left: 0, right: -20,
         minWidth: "100%", overflowY: "scroll", display: "flex", flexDirection: "row",
         overflowX: "hidden",
     }}>
         <div
+            ref={canvasContainer}
             onMouseMove={onMouseMove}
             style={{
                 height: "100vh",
@@ -860,12 +905,11 @@ function ThreeDeHome({
                 <AdaptivePixelRatio />
                 <AutoFOV />
                 <CameraPath scroll={scrollHandler} />
+                <FrameFunctions functions={[centerFunction]} canvas={canvas}/>
             </Canvas>
-            <BackButton ref={backButtonRef} scroll={scrollHandler} />
-            <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router} />
         </div>
         <div style={{
-            top: 0, height: "100vh", position: "relative", flexGrow: 1, flexBasis: 1, flexShrink: 0, pointerEvents: "none"
+            top: 0, bottom: 0, position: "relative", flexGrow: 1, flexBasis: 1, flexShrink: 0, pointerEvents: "none"
         }}>
             <div id={"front"} style={{ height: "1000px" }} /> {/* front page */}
             <div id={"portfolio"} style={{ height: "900px" }} /> {/* portfolio page */}
@@ -873,6 +917,7 @@ function ThreeDeHome({
             <div id={"articles"} style={{ height: "100%" }} /> {/* the last screen */}
         </div>
     </div>
+    </>;
 }
 
 interface StaticContentProps extends HomeProps {
