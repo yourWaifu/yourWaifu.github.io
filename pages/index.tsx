@@ -556,8 +556,13 @@ type BackButtonProps = { scroll: ScrollHandler };
 const BackButton = React.forwardRef<HTMLDivElement, BackButtonProps>((props, ref): JSX.Element => {
     const JumpLink = useJumpLinks(props.scroll);
 
-    return <div ref={ref} style={{position: "fixed", bottom: "1em", right: "1em", zIndex: 99999999}}>
-        <JumpLink id={"front"}><p>HOME</p></JumpLink>
+    return <div style={{
+        display: "flex", justifyContent: "flex-end", position: "sticky",
+        bottom: 0, width: "100%", zIndex: 99999999, pointerEvents: "none",
+    }}>
+        <div ref={ref} style={{margin: "1em", pointerEvents: "all"}}>
+            <JumpLink id={"front"}><p>HOME</p></JumpLink>
+        </div>
     </div>;
 });
 
@@ -838,7 +843,6 @@ function ThreeDeHome({
     }, []);
 
     return <>
-    <BackButton ref={backButtonRef} scroll={scrollHandler} />
     {/**Get available space on screen */}
     <FadeFromEffect backgroundColor={backgroundColor} transitionRef={fadeTransitionRef} router={router} />
     <div ref={topRef} style={{position: "fixed", top: 0}} />
@@ -907,6 +911,7 @@ function ThreeDeHome({
                 <CameraPath scroll={scrollHandler} />
                 <FrameFunctions functions={[centerFunction]} canvas={canvas}/>
             </Canvas>
+            <BackButton ref={backButtonRef} scroll={scrollHandler} />
         </div>
         <div style={{
             top: 0, bottom: 0, position: "relative", flexGrow: 1, flexBasis: 1, flexShrink: 0, pointerEvents: "none"
