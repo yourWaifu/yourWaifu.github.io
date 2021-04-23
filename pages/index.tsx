@@ -824,6 +824,7 @@ function ThreeDeHome({
     let canvas = useRef<HTMLCanvasElement>(null!);
     let centerFunction = useRef<(delta:number) => void>((delta:number)=>{});
     let canvasTransformY = 0;
+    let backButtonBottom = 0;
     useEffect(() => {
         if (!topRef.current || !bottomRef.current || !canvasContainer.current)
             return;
@@ -839,6 +840,11 @@ function ThreeDeHome({
             if (transformGoalY !== canvasTransformY)
                 canvas.current.parentElement.style.top = `${transformGoalY}px`;
             canvasTransformY = transformGoalY;
+
+            const backBottom = canvasRect.bottom - viewportBottom;
+            if (backButtonBottom !== backBottom && backButtonRef.current.parentElement)
+                backButtonRef.current.parentElement.style.bottom = `${backBottom}px`;
+            backButtonBottom = backBottom;
         }
     }, []);
 
