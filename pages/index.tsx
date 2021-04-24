@@ -826,25 +826,27 @@ function ThreeDeHome({
     let canvasTransformY = 0;
     let backButtonBottom = 0;
     useEffect(() => {
-        if (!topRef.current || !bottomRef.current || !canvasContainer.current)
-            return;
         centerFunction.current = (delta:number) => {
-            if (!canvas.current.parentElement)
+            if (!topRef.current || !bottomRef.current || !canvasContainer.current)
                 return;
             const viewportTop = topRef.current.getBoundingClientRect().top;
             const viewportBottom = bottomRef.current.getBoundingClientRect().bottom;
             const viewportCenterY = (viewportTop + viewportBottom) / 2;
             const canvasRect = canvasContainer.current.getBoundingClientRect();
             const canvasCenterY = (canvasRect.top + canvasRect.bottom) / 2;
-            const transformGoalY =  viewportCenterY - canvasCenterY;
-            if (transformGoalY !== canvasTransformY)
-                canvas.current.parentElement.style.top = `${transformGoalY}px`;
-            canvasTransformY = transformGoalY;
-
-            const backBottom = canvasRect.bottom - viewportBottom;
-            if (backButtonBottom !== backBottom && backButtonRef.current.parentElement)
-                backButtonRef.current.parentElement.style.bottom = `${backBottom}px`;
-            backButtonBottom = backBottom;
+            if (canvas.current.parentElement) {
+                const transformGoalY =  viewportCenterY - canvasCenterY;
+                if (transformGoalY !== canvasTransformY)
+                    canvas.current.parentElement.style.top = `${transformGoalY}px`;
+                canvasTransformY = transformGoalY;
+            }
+            
+            if (backButtonRef.current.parentElement) {
+                const backBottom = canvasRect.bottom - viewportBottom;
+                if (backButtonBottom !== backBottom)
+                    backButtonRef.current.parentElement.style.bottom = `${backBottom}px`;
+                backButtonBottom = backBottom;
+            }
         }
     }, []);
 
