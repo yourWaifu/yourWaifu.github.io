@@ -657,7 +657,7 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
             element.current.style.opacity = String(e.op);
         }
     });
-    useFadeIn(LoadingText, {delay: 200});
+    useFadeIn(LoadingText, {delay: 500});
 
     screenSpring.op.stop();
     transitionRef.current = (flip?: boolean) => {
