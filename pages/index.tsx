@@ -904,7 +904,7 @@ function ThreeDeHome({
                 <PortfolioContent />
                 <ContactContent />
                 <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                    <div style={{ textShadow: "2px 2px 5px black" }}>
+                    <div style={{ textShadow: "2px 2px 10px black", filter: "drop-shadow(2px 2px 1px black)" }}>
                         <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
                             const forwardProps = { router, ...props };
                             return <PageLink {...forwardProps} />
