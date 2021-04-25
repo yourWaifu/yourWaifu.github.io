@@ -646,10 +646,12 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
     let isLoading = useRef<boolean>(true);
     const start = 1;
     const end = 0;
+    const textSpring = useFadeIn(LoadingText, {delay: 200});
     const screenSpring = useSpring<{op: number}>({
         from: {op: start},
         onRest: () => {
             isLoading.current = false;
+            textSpring.op.finish();
         },
         onChange: (e) => {
             if (!element.current)
@@ -657,7 +659,6 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
             element.current.style.opacity = String(e.op);
         }
     });
-    useFadeIn(LoadingText, {delay: 500});
 
     screenSpring.op.stop();
     transitionRef.current = (flip?: boolean) => {
@@ -665,6 +666,7 @@ function FadeFromEffect({backgroundColor, transitionRef, router}: {
             {from: start, to: end} : {from: end, to: start};
         screenSpring.op.set(from);
         screenSpring.op.start({to});
+        textSpring.op.pause();
     }
 
     const softlockCheck = () => {
