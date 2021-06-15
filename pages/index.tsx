@@ -878,6 +878,7 @@ function ThreeDeHome({
                 backgroundColor: backgroundColor,
                 flexShrink: 0,
                 flexGrow: 0,
+                overflow: "hidden",
             }}
         >
             <Canvas
