@@ -20,7 +20,7 @@ First is getting an overview of how this website was created. I already have exp
 I don't remember how I exactly got React Three Fiber working, but I remember using an example they had that rendered a 3D model. In that example, I noticed they used a GLTFLoader. GLTF is a royalty-free format for loading in models that 3D software like Blender supports, allowing us to use Blender for this project.
 [![](/images/3d-website/gltf-code-generator_1.19.1.jpg)](https://gltf.pmnd.rs/)
 Thankfully, someone also made a GLTF to React Three Fiber code generator that turned out to be really helpful as it would write out the code you would need to write to load and render the 3D models and materials that’s in the GLTF file.
-[![](/images/3d-website/just-a-girl-model_1.20.1)](https://gltf.pmnd.rs/)
+[![](/images/3d-website/just-a-girl-model_1.20.1.jpg)](https://gltf.pmnd.rs/)
 They even have a nice website, [https://gltf.pmnd.rs/](https://gltf.pmnd.rs/).
 
 ## Making a 3D Model
