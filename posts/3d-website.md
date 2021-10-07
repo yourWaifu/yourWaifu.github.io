@@ -134,11 +134,11 @@ I showed it to people online and people were impressed. React.js, Three.js, and 
 
 ## Thanks for Reading
 
-Writing, editing, and website by Hao Qi Wu https://yourwaifu.dev/
+Writing, editing, and website by Hao Qi Wu [https://yourwaifu.dev/](https://yourwaifu.dev/)
 
-"Just a girl" (https://skfb.ly/6UCJW) by 腱鞘炎の人 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+"Just a girl" ([https://skfb.ly/6UCJW](https://skfb.ly/6UCJW)) by 腱鞘炎の人 is licensed under Creative Commons Attribution ([http://creativecommons.org/licenses/by/4.0/](http://creativecommons.org/licenses/by/4.0/)).
 
-Damaged Helmet - https://sketchfab.com/models/b81008d513954189a063ff901f7abfe4
+Damaged Helmet - [https://sketchfab.com/models/b81008d513954189a063ff901f7abfe4](https://sketchfab.com/models/b81008d513954189a063ff901f7abfe4)
 Battle Damaged Sci-fi Helmet - PBR by theblueturtle_, published under a Creative Commons Attribution-NonCommercial license
 
-1984 Apple Macintosh 128k (Expanded) https://sketchfab.com/3d-models/1984-apple-macintosh-128k-expanded-544a03b89d72462c9b1480dcae3d2530
+1984 Apple Macintosh 128k (Expanded) [https://sketchfab.com/3d-models/1984-apple-macintosh-128k-expanded-544a03b89d72462c9b1480dcae3d2530](https://sketchfab.com/models/b81008d513954189a063ff901f7abfe4)
