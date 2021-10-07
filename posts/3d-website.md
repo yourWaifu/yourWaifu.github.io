@@ -17,8 +17,10 @@ First is getting an overview of how this website was created. I already have exp
 ## Adding 3D Stuff
 
 [![](/images/3d-website/three-fiber-example_1.12.1.png)](https://codesandbox.io/s/volumetric-light-w633u)
-I don't remember how I exactly got React Three Fiber working, but I remember using an example they had that rendered a 3D model. In that example, I noticed they used a GLTFLoader. GLTF is a royalty-free format for loading in models that 3D software like Blender supports, allowing us to use Blender for this project. Thankfully, someone also made a GLTF to React Three Fiber code generator that turned out to be really helpful as it would write out the code you would need to write to load and render the 3D models and materials that’s in the GLTF file.
+I don't remember how I exactly got React Three Fiber working, but I remember using an example they had that rendered a 3D model. In that example, I noticed they used a GLTFLoader. GLTF is a royalty-free format for loading in models that 3D software like Blender supports, allowing us to use Blender for this project.
 [![](/images/3d-website/gltf-code-generator_1.19.1.jpg)](https://gltf.pmnd.rs/)
+Thankfully, someone also made a GLTF to React Three Fiber code generator that turned out to be really helpful as it would write out the code you would need to write to load and render the 3D models and materials that’s in the GLTF file.
+[![](/images/3d-website/just-a-girl-model_1.20.1)](https://gltf.pmnd.rs/)
 They even have a nice website, [https://gltf.pmnd.rs/](https://gltf.pmnd.rs/).
 
 ## Making a 3D Model
@@ -84,7 +86,7 @@ so I used SRGB and found the whole thing to have really washed out colors,
 ![](/images/3d-website/trying-dithering_1.87.1.png)
 so I tried dithering instead. I was afraid that might be noticeable but it fixed the issue and I couldn’t notice the dithering.
 
-I wasn't a fan of the scale bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and css to get it not show a scale bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout. However, thanks to React, the layout and the content was separated into separated components making this a lot easier.
+I wasn't a fan of the scale bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and css to get it not show a scale bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
 ![](/images/3d-website/large-element_1.90.1.jpg)
 I ended up making a large HTML element that you can scroll with the 3D content and using css, made the scroll bar off screen to the right and made it so that you can’t scroll to it. I then had to make the 3D content stick to the top and left sides of the screen using CSS sticky.
 <div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
@@ -132,3 +134,11 @@ I showed it to people online and people were impressed. React.js, Three.js, and 
 
 ## Thanks for Reading
 
+Writing, editing, and website by Hao Qi Wu https://yourwaifu.dev/
+
+"Just a girl" (https://skfb.ly/6UCJW) by 腱鞘炎の人 is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+Damaged Helmet - https://sketchfab.com/models/b81008d513954189a063ff901f7abfe4
+Battle Damaged Sci-fi Helmet - PBR by theblueturtle_, published under a Creative Commons Attribution-NonCommercial license
+
+1984 Apple Macintosh 128k (Expanded) https://sketchfab.com/3d-models/1984-apple-macintosh-128k-expanded-544a03b89d72462c9b1480dcae3d2530
