@@ -72,7 +72,7 @@ And there we have it, a name smooth cup without breaking the triangle budget.
 ## Different Surfaces One Material
 
 ![](/images/3d-website/cpu-materal.jpg)
-I wanted to add another 3D model to the site, so I 3D modeled a CPU. The material on the CPU was the most complex part as a CPU is made up of more than one material. Some parts of it are made of metal, gold, etc.
+I wanted to add another 3D model to the site, so I 3D modeled a CPU. The material on the CPU was the most complex part as a CPU is made up of more than one material. Some parts of it are made of nickel, copper, gold, etc.
 [![](/images/3d-website/RoughnessMap-2.png)](https://www.nvidia.com/en-us/geforce/guides/minecraft-rtx-texturing-guide/)
 I also never had to do this before, but I actually found a good guide on this for Minecraft textures. Minecraft’s new path tracing renderer for their bedrock version of the game adds in a albedo, metalness, roughness, emissive, height, and normal map to their game and they gave the community a good guide on how to use these for making texture packs. I’ve actually already known about this but I have never made those things before so I used this as a nice guide.
 ![](/images/3d-website/blender-texture-painter_1.81.1.jpg)
@@ -86,16 +86,16 @@ so I used SRGB and found the whole thing to have really washed out colors,
 ![](/images/3d-website/trying-dithering_1.87.1.png)
 so I tried dithering instead. I was afraid that might be noticeable but it fixed the issue and I couldn’t notice the dithering.
 
-I wasn't a fan of the scale bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and css to get it not show a scale bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
+I wasn't a fan of the scale bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and CSS to get it to not show a scale bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
 ![](/images/3d-website/large-element_1.90.1.jpg)
-I ended up making a large HTML element that you can scroll with the 3D content and using css, made the scroll bar off screen to the right and made it so that you can’t scroll to it. I then had to make the 3D content stick to the top and left sides of the screen using CSS sticky.
+I ended up making a large HTML element that you can scroll with the 3D content and using CSS, made the scroll bar off screen to the right and made it so that you can’t scroll to it. I then had to make the 3D content stick to the top and left sides of the screen using CSS sticky.
 <div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 However, CSS sticky elements take up space as such, it allows the user to scroll more than before.
 
 ![](/images/3d-website/canvas-under-scroll_1.90.2.jpg)
 The solution I wanted was having the scroll element under the canvas and button.
 ![](/images/3d-website/flex-to-the-right_1.91.1.jpg)
-However, a simpler solution was to use css flex to move the scroll element to the right of the canvas where it should also be off-screen.
+However, a simpler solution was to use CSS flex to move the scroll element to the right of the canvas where it should also be off-screen.
 
 Another problem was that is for some reason, I don’t know why, touching buttons outside of this big scrollable element, like the Home button, would cancel some inputs like scrolling. Making scrolling feel unresponsive.
 ![](/images/3d-website/off-centered_1.95.1.jpg)
