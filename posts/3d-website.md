@@ -12,7 +12,7 @@ I made a website that has 3D models, lighting, and materials. Likewise, I used a
 
 ## Overview
 
-First is getting an overview of how this website was created. I already have experience with WebGL from making my own game engine and having to use WebGL to render the game on a website. But I don’t feel like spending weeks on a renderer when there’s Three.js to do that stuff for me. There’s even a React Renderer made for it called React Three Fiber, that’ll help use Three.js with React.js.
+I already have experience with WebGL from making my own game engine and having to use WebGL to render the game on a website. But I don’t feel like spending weeks on a renderer when there’s Three.js to do that stuff for me. There’s even a React Renderer made for it called React Three Fiber, that’ll help use Three.js with React.js.
 
 ## Adding 3D Stuff
 
