@@ -34,6 +34,10 @@
 		}
 */
 
+		.feature-a-text {
+			max-width: calc(60em * 0.8);
+		}
+
 		.feature-a-header h1 {
 			font-size: calc(5.78vw * 0.8203125);
 		}
@@ -48,6 +52,10 @@
 			margin-block-start: 1em;
 			margin-block-end: 1em;
 			font-size: calc(2vw * 0.8203125);
+		}
+
+		.p-like div {
+			margin: 0 0.5em;
 		}
 
 		.flex-split {
@@ -69,6 +77,75 @@
 		.text-center {
 			text-align: center;
 		}
+
+		@media only screen and (min-width: 60em) {
+			.page-top-margin {
+				height: 2.25em;
+			}
+
+			.page-margins {
+				flex-basis: 7em;
+				flex-grow: 1;
+			}
+
+			.page-content {
+				font-size: 1em;
+				flex-basis: calc(60em - 7em * 2);
+				flex-grow: 0;
+			}
+
+			.feature-a-text {
+				max-width: calc(60em * 0.8);
+			}
+
+			.feature-a-header {
+				width: calc(60em - 7em * 2);
+			}
+
+			.feature-a-header h1 {
+				font-size: 3em;
+			}
+
+			.feature-a-header h2 {
+				font-size: 2em;
+				margin-bottom: 0.9em;
+			}
+
+			.p-like {
+				font-size: 1em;
+			}
+		}
+
+		@media print {
+			.page-top-margin {
+				height: 3.7377450980392vw;
+			}
+
+			.page-margins {
+				width: 11.580882353vw;
+			}
+
+			.page-content {
+				font-size: calc(2vw * 0.8203125);
+			}
+
+			.feature-a-header h1 {
+				font-size: calc(5.78vw * 0.8203125);
+			}
+
+			.feature-a-header h2 {
+				font-size: calc(3.85vw * 0.8203125);
+				margin-bottom: calc(2.85vw * 0.8203125);
+			}
+
+			.feature-a-text {
+				padding: 0 10vw;
+			}
+
+			.p-like {
+				font-size: calc(2vw * 0.8203125);
+			}
+		}
 	</style>
 	<title>Hao Qi Wu's Resume</title>
 </head>
@@ -80,7 +157,7 @@
 				<h1>Hao Qi Wu</h1>
 				<h2>Computer Programmer</h2>
 			</section>
-			<section class="feature-a-text p-like" style="display: flex; justify-content: space-around; width: unset; padding: 0 10vw; flex-wrap: wrap">
+			<section class="feature-a-text p-like" style="display: flex; justify-content: space-around; width: unset; flex-wrap: wrap">
 					<div>
 						<i class="fas fa-compass"></i> Philadelphia, PA 19149
 					</div>
@@ -108,7 +185,7 @@
 			<h2><i class="fas fa-graduation-cap"></i> Education</h2>
 			<p>
 				<div class="flex-split">
-					<div>Drexel University, Philadelphia, PA</div>
+					<div style="flex-basis: 50%;">Drexel University, Philadelphia, PA</div>
 					<div class="text-right">2018-2020</div>
 				</div>
 			</p>
