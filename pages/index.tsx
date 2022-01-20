@@ -101,7 +101,7 @@ function Sig({
 function Cup({}): JSX.Element {
     const group = useRef<GroupProps>();
     const gltf = useLoader(GLTFLoader, '/cup.glb');
-    
+
     const mesh = (gltf.nodes.cup as THREE.Mesh);
     const baseRotation = new THREE.Euler(1.627387, -0.65587553, 2.171643);
     let material = gltf.materials['Material.001'];
@@ -145,7 +145,7 @@ function Cup({}): JSX.Element {
 function Keyboard({}): JSX.Element {
     const group = useRef<GroupProps>(null!);
     const gltf = useGLTF('/keyboard.glb');
-    
+
     const mesh = (gltf.nodes.keyboard as THREE.Mesh);
     const baseRotation = new THREE.Euler(0.028403261, -1.430315, -1.963495);
     const scaleFactor = 0.0227021 * baseScale;
@@ -189,7 +189,7 @@ function CPU({
     const group = useRef<THREE.Group>();
     const light = useRef<THREE.Group>();
     const { nodes, materials } = useGLTF("/cpu.glb");
-    
+
     const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
     const scaleFactor = 0.0227021 * baseScale;
     const scale = new THREE.Vector3(scaleFactor, scaleFactor, scaleFactor);
@@ -356,7 +356,7 @@ function Html(props: HtmlProps): JSX.Element {
         const when0 = viewDistance + when1;
         page.style.opacity = (1 - ((distance - when1)/(when0 - when1))).toString();
     });
-    
+
     return <group ref={group} />
 }
 
@@ -618,7 +618,7 @@ function PostProcess() {
     const height = useThree(state => state.viewport.height);
     const group = useRef<GroupProps>(null!);
     return <EffectComposer>
-        
+
     </EffectComposer>
 }
 
@@ -733,7 +733,7 @@ function ThreeDeHome({
     const router = useRouter();
 
     const mouse = useRef<MouseOverData>({x: 0, y:0, halfW: 0, halfH: 0});
-    const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(({ clientX: x, clientY: y }) => 
+    const onMouseMove: MouseEventHandler<HTMLDivElement> = useCallback(({ clientX: x, clientY: y }) =>
         (mouse.current = {
             x: x - window.innerWidth / 2,
             y: y - window.innerHeight / 2,
@@ -842,7 +842,7 @@ function ThreeDeHome({
                     canvas.current.parentElement.style.top = `${transformGoalY}px`;
                 canvasTransformY = transformGoalY;
             }
-            
+
             if (backButtonRef.current.parentElement) {
                 const backBottom = canvasRect.bottom - viewportBottom;
                 if (backButtonBottom !== backBottom)
@@ -949,7 +949,7 @@ function StaticContent(props: StaticContentProps) {
     return <div style={{maxWidth: "37em", padding: "0 1em", margin: "auto"}}>
         <h1>Hao Qi Wu</h1>
         {props.errorMessage}
-        
+
         <Portfolio />
         <h2>Contact</h2>
         <ContactInfo />
@@ -971,19 +971,20 @@ function FadeStaticContent(props: StaticContentProps) {
     </div>
 }
 
+function supportsWebGL(): boolean {
+    try {
+        const canvas = document.createElement('canvas');
+        return (!!window.WebGLRenderingContext) && !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+    } catch (e) {
+        return false;
+    }
+}
+
 export default function Home(props: HomeProps) {
     const [canUseWebGL, setUseWebGL] = useState<null | boolean>(null);
     useEffect(() => {
         if (canUseWebGL === null) {
-            let hasWebGL: boolean = false;
-            if (window.WebGLRenderingContext) {
-                let canvas = document.createElement("canvas");
-                var context = canvas.getContext("webgl")
-                    || canvas.getContext("experimental-webgl");
-                hasWebGL = Boolean(context && context instanceof WebGLRenderingContext);
-            }
-    
-            setUseWebGL(hasWebGL);
+            setUseWebGL(supportsWebGL());
         }
     }, []);
 
@@ -991,7 +992,7 @@ export default function Home(props: HomeProps) {
 
     const errorMessage = !hasJavaScript ?
         <p>Please enable JavaScript to view the home page</p>
-    : canUseWebGL === false ? 
+    : canUseWebGL === false ?
         <p>
             Please enable WebGL or use a browser with it enabled to view the home page.
             Visit <a href="https://get.webgl.org/">https://get.webgl.org/</a> for more info.
@@ -1012,14 +1013,14 @@ export default function Home(props: HomeProps) {
     :
         <FadeStaticContent {...staticContentProps} />
     ;
-        
+
     //create a fixed position to prevent overflow
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
         <div style={{width: "100vw", height: "100vh", position: "fixed"}}>
-            {(canUseWebGL === true) &&  <ThreeDeHome {...props}/> }
+            {canUseWebGL &&  <ThreeDeHome {...props}/>}
             {errorContent}
         </div>
     </Layout>
