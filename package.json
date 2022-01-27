@@ -24,7 +24,7 @@
     "react-spring": "^9.0.0",
     "remark": "^13.0.0",
     "remark-html": "^13.0.1",
-    "three": "^0.126.1",
+    "three": "^0.137.0",
     "three-stdlib": "^1.2.2",
     "yarn": "^1.22.10"
   },
