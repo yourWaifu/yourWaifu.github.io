@@ -531,14 +531,14 @@ function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
         style = {marginTop: 0}
     }
     return <>
-        <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">Sleepy Discord</a></h2>
-        I made a C++ Library for Discord <br />
-        <h2><a href="https://www.heavyeyedgames.com/">Video Games</a></h2>
+        <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">C++ Library for Discord</a></h2>
+        Sleepy Discord <br />
+        <h2><a href="https://www.heavyeyedgames.com/">Custom Game Engine</a></h2>
         <div>
             {/**Floatin element to keep the text from overlapping with the cup */}
             <div style={{float: "right", width: "25%", height:"2.5em"}}></div>
-            Game engine with V8 JavaScript. <br />
-            Mods for Dota 2.
+            V8 JavaScript for Scripting <br />
+            Rollback Net-code
         </div>
         <h2><a href="https://github.com/yourWaifu">Contributions to Open Source</a></h2>
         Added UI features to the Dolphin Emulator. <br />
