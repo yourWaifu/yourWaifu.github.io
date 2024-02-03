@@ -614,14 +614,6 @@ function FrameFunctions({functions, canvas}:{
     return null;
 }
 
-function PostProcess() {
-    const height = useThree(state => state.viewport.height);
-    const group = useRef<GroupProps>(null!);
-    return <EffectComposer>
-
-    </EffectComposer>
-}
-
 function useFadeIn(element: React.MutableRefObject<HTMLDivElement>, options?: {delay?: number}) {
     return useSpring<{op: number}>({
         from: {op: 0},
@@ -715,7 +707,10 @@ type ArticlesListProps = {
     LinkComponent: (props:{href: string, children: React.ReactNode}) => JSX.Element;
 }
 
-function ArticlesList(props: ArticlesListProps) {
+function ArticlesList(props: ArticlesListProps): JSX.Element {
+    if (typeof props.LinkComponent !== "function") {
+        throw new Error("Can't list articles without link component");
+    }
     return <>
         {props.allPostsData.map((data) => (<div key={data.id}>
             <props.LinkComponent href={`/posts/${data.id}`}>
@@ -954,7 +949,9 @@ function StaticContent(props: StaticContentProps) {
         <h2>Contact</h2>
         <ContactInfo />
         <h2>Articles</h2>
-        <ArticlesList allPostsData={props.allPostsData} LinkComponent={Link} />
+        <ArticlesList allPostsData={props.allPostsData} LinkComponent={(props) => {
+            return <Link href={props.href}>{props.children}</Link>
+        }} />
         <div style={{height: "1em"}} />
     </div>;
 }
