@@ -15,7 +15,6 @@ jobs:
           node-version: '21.x'
       - name: Setup
         run: |
-          npm install
           npx yarn install --frozen-lockfile
       - name: Build
         run: |
