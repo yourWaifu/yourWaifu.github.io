@@ -19,7 +19,7 @@ jobs:
       - name: Build
         run: |
           npx yarn build
-          npx next export
+          npx next build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
