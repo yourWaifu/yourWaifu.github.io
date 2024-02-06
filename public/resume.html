@@ -11,8 +11,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		.page-top-margin {
-			height: 3.7377450980392vw;
+			height: 0;
 		}
+		
 
 		.page-margins {
 			width: 11.580882353vw;
@@ -21,7 +22,7 @@
 		.page-content {
 			flex: 1 1 100%;
 			text-align: left;
-			font-size: calc(2vw * 0.69);
+			font-size: calc(2vw * 0.78);
 		}
 /*
 		.feature-a-header h1 {
@@ -39,19 +40,19 @@
 		}
 
 		.feature-a-header h1 {
-			font-size: calc(5.78vw * 0.69);
+			font-size: calc(5.78vw * 0.78);
 		}
 
 		.feature-a-header h2 {
-			font-size: calc(3.85vw * 0.69);
-			margin-bottom: calc(2.85vw * 0.69);
+			font-size: calc(3.85vw * 0.78);
+			margin-bottom: calc(2.85vw * 0.78);
 		}
 
 		.p-like {
 			display: block;
 			margin-block-start: 1em;
 			margin-block-end: 1em;
-			font-size: calc(2vw * 0.69);
+			font-size: calc(2vw * 0.78);
 		}
 
 		.p-like div {
@@ -66,7 +67,7 @@
 
 		.flex-split div {
 			flex-basis: 33.33%;
-			flex-shrink: 0;
+			flex-shrink: 1;
 			flex-grow: 0;
 		}
 
@@ -76,9 +77,10 @@
 
 		.text-center {
 			text-align: center;
+			margin: 0 0.5rem;
 		}
 
-		@media only screen and (min-width: 62em) {
+		@media only screen {
 			.page-top-margin {
 				height: 0;
 			}
@@ -99,7 +101,8 @@
 			}
 
 			.feature-a-header {
-				width: calc(62em - 7em * 2);
+				max-width: calc(62em - 7em * 2);
+				border-bottom: 0.2rem solid;
 			}
 
 			.feature-a-header h1 {
@@ -116,6 +119,18 @@
 			}
 		}
 
+		/* very small screens */
+		@media only screen and (max-width: 35em) {
+			.feature-a-header h1 {
+				font-size: calc(5.78vw * 1.5);
+			}
+
+			.feature-a-header h2 {
+				font-size: calc(3.85vw * 1.5);
+				margin-bottom: calc(2.85vw * 1.5);
+			}
+		}
+
 		@media print {
 			.page-top-margin {
 				height: 3.7377450980392vw;
@@ -126,16 +141,16 @@
 			}
 
 			.page-content {
-				font-size: calc(2vw * 0.69);
+				font-size: calc(2vw * 0.78);
 			}
 
 			.feature-a-header h1 {
-				font-size: calc(5.78vw * 0.69);
+				font-size: calc(5.78vw * 0.78);
 			}
 
 			.feature-a-header h2 {
-				font-size: calc(3.85vw * 0.69);
-				margin-bottom: calc(2.85vw * 0.69);
+				font-size: calc(3.85vw * 0.78);
+				margin-bottom: calc(2.85vw * 0.78);
 			}
 
 			.feature-a-text {
@@ -143,7 +158,7 @@
 			}
 
 			.p-like {
-				font-size: calc(2vw * 0.69);
+				font-size: calc(2vw * 0.78);
 			}
 		}
 	</style>
@@ -185,12 +200,12 @@
 			<h2><i class="fas fa-graduation-cap"></i> Education</h2>
 			<p>
 				<div class="flex-split">
-					<div style="flex-basis: 50%;">Northeast High School, Philadelphia, PA</div>
-					<div class="text-right">2014-2018</div>
-				</div>
-				<div class="flex-split">
 					<div style="flex-basis: 50%;">Drexel University</div>
 					<div class="text-right">2018-2020</div>
+				</div>
+				<div class="flex-split">
+					<div style="flex-basis: 50%;">Northeast High School, Philadelphia, PA</div>
+					<div class="text-right">2014-2018</div>
 				</div>
 			</p>
 			<h2> <i class="fas fa-award"></i> Skills</h2>
@@ -205,12 +220,15 @@
 				<div class="flex-split">
 					<div>Glodon USA</div>
 					<div class="text-center">JavaScript & Front-End Developer</div>
-					<div class="text-right">May 2016 to Aug 2022</div>
+					<div class="text-right">Jun 2022 to Jan 2023</div>
 				</div>
 				<ul>
-					<li>Made APIs for connecting JavaScript code with C++ & Python code using native functions</li>
-					<li>Implemented designs made by designers on Figma</li>
-					<li>Managed private NPM registry for private bespoke JS tools like: build tools, polyfills, and testing</li>
+					<li>Developed a computer-aided design (CAD) app with generative design and visual programming via node graphs</li>
+					<li>Implemented a native client written in JavaScript with Sciter's Reactor, JSX, and signals for state management, and C++ using Sciter & QuickJS</li>
+					<li>Embedded JavaScript code into a native C++ app and made APIs to access native functionality from JS</li>
+					<li>Experimented with a port to Solid.js and WebGPU to run on web browsers and have faster employee onboarding</li>
+					<li>Created forked JS tools for i18n, build tools, polyfills, and a UI tester</li>
+					<li>Collaborated with designers and implemented their designs from Figma</li>
 				</ul>
 			</p>
 			<p>
@@ -221,46 +239,11 @@
 				</div>
 				<ul>
 					<li>Owner of projects with lots of stars and forks</li>
-					<li>Collaborating with others online to develop open source software on Github</li>
-					<li>Fixing issues on open source software on Github such as the Dolphin Emulator</li>
+					<li>Collaborated with others online to develop open-source software on GitHub</li>
+					<li>Fixed issues on open-source software on GitHub, such as the Dolphin Emulator</li>
 				</ul>
 			</p>
 			<h2><i class="fas fa-briefcase"></i> Projects</h2>
-			<p>
-				<div class="flex-split">
-					<div>Concetto GUI</div>
-					<div class="text-center">Front-End Programmer</div>
-					<div class="text-right">June 2022 to January 2024</div>
-				</div>
-				<ul>
-					<li>JavaScript APIs for Concetto, a CAD application with Python Scripting</li>
-					<li>Written in JavaScript, TypeScript, and C++ using Sciter and quickJS</li>
-					<li>Wrote custom polyfills and libraries for i18n, testing, & new Web APIs</li>
-				</ul>
-			</p>
-			<p>
-				<div class="flex-split">
-					<div>YourWaifu.dev Personal Website</div>
-					<div class="text-center">Programmer</div>
-					<div class="text-right">April 2021 to present</div>
-				</div>
-				<ul>
-					<li>Website made using React.js, Next.js, Three.js, and Typescript</li>
-					<li>Made multiple 3D models and effects</li>
-				</ul>
-			</p>
-			<p>
-				<div class="flex-split">
-					<div>School Project</div>
-					<div class="text-center">Full-Stack Programmer</div>
-					<div class="text-right">January 2020 to June 2020</div>
-				</div>
-				<ul>
-					<li>Collaborated with a team of 4 people to develop a cloud storage website with community features like comments in TypeScript, JavaScript, and Node.js</li>
-					<li>Managed a SQL database</li>
-					<li>Ran a web server and service on the cloud with Azure, Digital Ocean, and Scaleway</li>
-				</ul>
-			</p>
 			<p>
 				<div class="flex-split">
 					<div>Unofficial Discord 3DS Client</div>
@@ -284,12 +267,6 @@
 					<li>Used CMake and multiple WebSockets, HTTP, and TLS libraries</li>
 				</ul>
 			</p>
-			<!--
-			<h2><i class="fas fa-chalkboard-teacher"></i> Relevant Coursework</h2>
-			<p>
-				Computer Programing 1, Computer Programming 2, Computing and Informatics Design
-			</p>
-			-->
 			<diV class="page-top-margin"></diV>
 		</div>
 		<div class="page-margins"></div>
