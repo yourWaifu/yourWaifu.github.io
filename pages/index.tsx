@@ -188,7 +188,7 @@ function CPU({
 }): JSX.Element {
     const group = useRef<THREE.Group>();
     const light = useRef<THREE.Group>();
-    const { nodes, materials } = useGLTF("/cpu.glb");
+    const { nodes, materials } = useLoader(GLTFLoader, '/cpu.glb');
 
     const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
     const scaleFactor = 0.0227021 * baseScale;
