@@ -17,6 +17,7 @@ import lerp from '../lib/lerp' //common linear interpolation
 import { SpringValue, useSpring } from 'react-spring'
 import { EffectComposer, DepthOfField, Bloom, SSAO } from '@react-three/postprocessing'
 import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import { PerspectiveCamera } from 'three'
 import { useFadeOut } from '../lib/fade-out'
 
@@ -294,6 +295,7 @@ type HtmlRef = {
 };
 
 function Html(props: HtmlProps): JSX.Element {
+    const root = React.useRef<ReactDOM.Root>();
     const group = useRef<GroupProps>(null!);
     const camera = useThree(state => state.camera);
     const [page] = React.useState(() => document.createElement('div'));
@@ -303,9 +305,10 @@ function Html(props: HtmlProps): JSX.Element {
     if (props.zRef)
         props.zRef.current = props.positionZ;
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         if (!group.current)
             return;
+        const currentRoot = (root.current = createRoot(page!));
         scene.updateMatrixWorld();
         page.style.cssText = "position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%;";
         page.style.zIndex = `${getZIndexFromPosition(props.positionZ)}`;
@@ -314,6 +317,7 @@ function Html(props: HtmlProps): JSX.Element {
         }
         return () => {
             if (target) target.removeChild(page);
+            currentRoot.unmount();
         }
     }, [target]);
 
@@ -326,7 +330,7 @@ function Html(props: HtmlProps): JSX.Element {
     };
 
     React.useLayoutEffect(() => {
-        ReactDOM.render(<div style={styles} children={props.children}/>, page);
+        root.current?.render(<div style={styles} children={props.children}/>);
     });
 
     useFrame(() => {
