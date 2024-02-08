@@ -16,8 +16,7 @@ import { GroupProps } from '@react-three/fiber/dist/declarations/src/three-types
 import lerp from '../lib/lerp' //common linear interpolation
 import { SpringValue, useSpring } from 'react-spring'
 import { EffectComposer, DepthOfField, Bloom, SSAO } from '@react-three/postprocessing'
-import ReactDOM from 'react-dom'
-import { createRoot } from 'react-dom/client';
+import * as ReactDOM from 'react-dom/client';
 import { PerspectiveCamera } from 'three'
 import { useFadeOut } from '../lib/fade-out'
 
@@ -308,7 +307,7 @@ function Html(props: HtmlProps): JSX.Element {
     React.useLayoutEffect(() => {
         if (!group.current)
             return;
-        const currentRoot = (root.current = createRoot(page!));
+        const currentRoot = (root.current = ReactDOM.createRoot(page!));
         scene.updateMatrixWorld();
         page.style.cssText = "position:absolute;top:0;left:0;transform-origin:0 0;height:100%;width:100%;";
         page.style.zIndex = `${getZIndexFromPosition(props.positionZ)}`;
