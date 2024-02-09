@@ -3,6 +3,7 @@ import { GetStaticProps, GetStaticPaths } from "next";
 import Head from 'next/head'
 import Link from 'next/link'
 import { getAllPostIds, getPostData } from '../../lib/posts'
+import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 
 export function getPostDateStr(date: string) {
   const event = new Date(date);
@@ -18,7 +19,7 @@ export default function Post(
       id: string
       title: string
       date: string
-      content: string
+      content: MDXRemoteSerializeResult
     }
   }
 ) {
@@ -44,7 +45,7 @@ export default function Post(
         </section>
         <div className="article">
           <section className="article-content">
-            <div dangerouslySetInnerHTML={{ __html: postData.content }} />
+            <MDXRemote {...postData.content} />
           </section>
         </div>
       </article>

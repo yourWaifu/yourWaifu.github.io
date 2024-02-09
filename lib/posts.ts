@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import util from 'util'
 import matter from 'gray-matter'
-import remark from 'remark'
-import html from 'remark-html'
+import { serialize } from 'next-mdx-remote/serialize'
+import {MDXRemoteSerializeResult} from "next-mdx-remote";
 
 const postsDirectory = path.join(process.cwd(), 'posts');
 
@@ -50,12 +50,8 @@ export async function getAllPostIds() {
     });
 }
 
-async function renderWithReact(mdxCode:string) {
-    //to do use mdx
-    const processedContent = await remark()
-        .use(html)
-        .process(mdxCode);
-    return processedContent.toString()
+async function renderWithReact(mdxCode:string): Promise<MDXRemoteSerializeResult> {
+    return await serialize(mdxCode);
 }
 
 export async function getPostData(id: string) {
@@ -66,7 +62,7 @@ export async function getPostData(id: string) {
     const matterResult = matter(await fileContents);
 
     // Use mdx to convert markdown into HTML string
-    const content = await renderWithReact((await matterResult).content);
+    const content: MDXRemoteSerializeResult = await serialize((await matterResult).content);
 
     return {
         id,

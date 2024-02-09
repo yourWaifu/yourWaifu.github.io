@@ -32,9 +32,9 @@ The 3D model doesn’t have a material or texture, so I used Three.js’s basic 
 ## The Camera
 
 After that, I added some camera controls. When I first envisioned this, I thought of the camera following a 3D path that the camera will take. However, I felt that having the camera move forward was enough for the sake of time. I added an invisible HTML element that extended past the screen to make it, so you can scroll down on the page, and made it so that scrolling down moves the camera.
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/BeneficialAdorableGrison' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/BeneficialAdorableGrison-mobile.mp4" type="video/mp4" /></video>
 Doing this also makes the window where it draws all the 3D models also move up when you scroll down,
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/DizzyPleasingGreyhounddog' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/DizzyPleasingGreyhounddog-mobile.mp4" type="video/mp4" /></video>
 so I used some CSS to make it stay at the same spot on screen.
 
 ## Not a flat 3D Model
@@ -64,9 +64,9 @@ At this point, I deployed it and showed it off to some people online. I got a bu
 so I decided to make a cup that was round.
 ![](/images/3d-website/subdivisions_1.61.1.jpg)
 I did some subdivisions on the model and added a few more faces on the top and bottom, and it created this nice round model. However, this model had 2 million triangles. This model is going to be rendered on a slow phone, so I need to lower that triangle count so that it doesn’t cause my site to run so slowly.
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/SaneFloweryIrishredandwhitesetter' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/SaneFloweryIrishredandwhitesetter-mobile.mp4" type="video/mp4" /></video>
 But lowering the number would make the cup less smooth looking. I know a trick that will work, and it is known as normal maps. It gives the illusion of a smoother model without more triangles. You can find more info online, but I never did this ever before, so I found tutorials online. Messed it up a bunch of times for hours and hours until I got a good result.
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/VariableRegalHoopoe' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/VariableRegalHoopoe-mobile.mp4" type="video/mp4" /></video>
 And there we have it, a name smooth cup without breaking the triangle budget.
 
 ## Different Surfaces One Material
@@ -80,16 +80,10 @@ I quickly got familiar with blender’s texture painter and UV editor so that I 
 
 ## 99 Small Issues
 
-From here, I fixed mostly small issues like I noticed some color banding,
-![](/images/3d-website/trying-srgb_1.85.1.png)
-so I used SRGB and found the whole thing to have really washed out colors,
-![](/images/3d-website/trying-dithering_1.87.1.png)
-so I tried dithering instead. I was afraid that might be noticeable, but it fixed the issue and I couldn’t notice the dithering.
-
-I wasn’t a fan of the scroll bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and CSS to get it to not show a scroll bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
+From here, I fixed mostly small issues. I wasn’t a fan of the scroll bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and CSS to get it to not show a scroll bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
 ![](/images/3d-website/large-element_1.90.1.jpg)
 I ended up making a large HTML element that you can scroll with the 3D content and, using CSS, made the scroll bar off-screen to the right and made it so that you can’t scroll to it. I then had to make the 3D content stick to the top and left sides of the screen using CSS sticky.
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+{/*<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>*/}
 However, CSS sticky elements take up space as such, it allows the user to scroll more than before.
 
 ![](/images/3d-website/canvas-under-scroll_1.90.2.jpg)
@@ -122,9 +116,9 @@ if (backButtonRef.current.parentElement) {
 ```
 I calculated where the elements should be on-screen and positioned the elements on every frame. And that fixed the strange issues and hides the scroll bar.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/HoarseGlaringAntbear' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/HoarseGlaringAntbear-mobile.mp4" type="video/mp4"/></video>
 I also noticed an issue where the Non-JavaScript content would flash on-screen before the 3D content would then flash on screen. I decided to make the Non-JavaScript content only visible when there’s no JavaScript content.
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/UltimateOffbeatAttwatersprairiechicken' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/3d-website/UltimateOffbeatAttwatersprairiechicken-mobile.mp4" type="video/mp4" /></video>
 If JavaScript is enabled, some text would fade in and when the first 3D model finished loading, it would fade out the text and fade in the 3D content.
 
 ## The Results

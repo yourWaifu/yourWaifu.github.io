@@ -24,18 +24,14 @@ Microsoft recognized this as a limitation of Windows and created DirectX as a so
 ![](/images/game-engine-graphics/xbox-console.png)
 Microsoft would also develop a custom version of Windows CE for the Sega Dreamcast with DirectX and would later use DirectX to form the basis of Microsoft's Xbox game console.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/SparseWhiteBronco' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
-
 In case, you aren't aware, APIs, short for Application Programming Interfaces, give applications a way to interact with something. For example, a game can sent GPU instructions to DirectX and DirectX would translate that into something that the GPU understands. Examples of a graphics API include OpenGL, Vulkan, and DirectX.
-
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/ChillyNegativeBunting' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 
 These APIs are designed with 3D graphics in mind, but the same functionality can be used for 2D graphics. For example, the game above look like it's in 2D, but you can rotate the camera, and in motion, you can see that there's a third dimension.
 
 Many developers don't use these APIs, at least not directly. Game engines like Unity usually handle this for you. However, without a game engine, you can use rendering libraries to handle the different graphics APIs for you. 
 Examples include BGFX, three.js, and Filament.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/PointlessJovialGyrfalcon' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/game-engine-graphics/PointlessJovialGyrfalcon-mobile.mp4" type="video/mp4" /></video>
 
 Triangles are commonly used as the basic building blocks for graphics. Triangles can be connected together to make more complex shapes that we'll call polygon meshes.
 
@@ -74,7 +70,7 @@ this.camera.position.z = 500;
 
 The scene shouldn't be gray just yet, as a scene needs a camera.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/ObviousInsidiousKestrel' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/game-engine-graphics/ObviousInsidiousKestrel-mobile.mp4" type="video/mp4" /></video>
 
 There are 2 types you can choose from, perspective and orthographic.
 
@@ -139,7 +135,7 @@ texture.repeat.set(1, 1/2);
 
 To fix this, I set the texture's repeat vector. This allows textures to be repeated many times, but you can use a fraction to zoom in on the texture. 
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/DangerousFoolhardyBadger' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/game-engine-graphics/DangerousFoolhardyBadger-mobile.mp4" type="video/mp4" /></video>
 
 ```ts
 const frameSize: number = 16/512; // same as 1/32
@@ -197,11 +193,11 @@ If you look at which frame of the compass if being rendered, it's the one at the
 ![](/images/game-engine-graphics/0-uv_2.21.1.jpg)
 This is because 0 in our UV map is on the bottom left.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/SelfishAgonizingAllensbigearedbat' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/game-engine-graphics/SelfishAgonizingAllensbigearedbat-mobile.mp4" type="video/mp4" /></video>
 
 So, using an offset of 1 - 1/32 gives the first frame. The 2nd frame would be 1 - (1/32 * 2). Giving us the formula 1 - (frameSize * frameNum), with frameNum being set to frameNum + 1 every time we render. You might also need to loop the frameNum back to 1, when it gets higher than the number of frames available, to allow for a looping animation and this can be done with % or modulo.
 
-<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FlimsyGaseousChanticleer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<video controls loop width="640"><source src="/images/game-engine-graphics/FlimsyGaseousChanticleer-mobile.mp4" type="video/mp4" /></video>
 
 And we're done. [Here's the final code.](https://github.com/yourWaifu/game-engine/blob/16f7d3059797f87ea6351b755cd719f38f48c97f/js/index.ts)
 

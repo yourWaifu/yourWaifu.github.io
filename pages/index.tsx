@@ -50,7 +50,7 @@ function Sig({
 
     const group = useRef<GroupProps>();
     const gltf = useLoader(GLTFLoader, '/sig.glb');
-    const material = new THREE.MeshBasicMaterial({ color: new THREE.Color('white') });
+    const material = new THREE.MeshBasicMaterial({ color: (new THREE.Color('white')).setScalar(5) });
 
     const { size, gl, scene } = useThree();
     const ration = gl.getPixelRatio();
@@ -882,7 +882,6 @@ function ThreeDeHome({
             <Canvas
                 orthographic={false}
                 shadows
-                linear
                 camera={{ position: [0, 0, baseCameraZ] }}
                 dpr={[0.4, window.devicePixelRatio]}
             >
