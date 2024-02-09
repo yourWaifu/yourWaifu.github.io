@@ -8,7 +8,7 @@ date: 2021-10-06T22:30:00
 
 I made a website that has 3D models, lighting, and materials. Likewise, I used a ton of different tools to get this result. And in this article I’ll be going over how I used Blender, React, and Three.JS to make a sick looking website.
 
-<iframe width="100%" height="333" src="https://www.youtube.com/embed/Ii8PUGTwMpk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" height="333" src="https://www.youtube.com/embed/Ii8PUGTwMpk" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
 ## Overview
 
@@ -83,7 +83,7 @@ I quickly got familiar with blender’s texture painter and UV editor so that I 
 From here, I fixed mostly small issues. I wasn’t a fan of the scroll bar because I felt that it was destroying the illusion of a 3D website. At first, I didn’t know how to do this and messed around with the HTML and CSS to get it to not show a scroll bar. It took me another day when I figured out a solution, once I did, I had to rewrite a good chunk of the HTML layout.
 ![](/images/3d-website/large-element_1.90.1.jpg)
 I ended up making a large HTML element that you can scroll with the 3D content and, using CSS, made the scroll bar off-screen to the right and made it so that you can’t scroll to it. I then had to make the 3D content stick to the top and left sides of the screen using CSS sticky.
-{/*<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>*/}
+{/*<div style='position:relative; padding-bottom:calc(56.25% + 44px)'><iframe src='https://gfycat.com/ifr/FalseAggravatingBorer' frameBorder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowFullScreen></iframe></div>*/}
 However, CSS sticky elements take up space as such, it allows the user to scroll more than before.
 
 ![](/images/3d-website/canvas-under-scroll_1.90.2.jpg)

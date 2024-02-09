@@ -8,7 +8,7 @@ date: 2021-11-29T22:30:00
 
 Welcome to part 1 of making a game engine. In this part, we will be drawing some graphics.
 
-<iframe width="100%" height="333" src="https://www.youtube.com/embed/CHpcG1VSH0E" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" height="333" src="https://www.youtube.com/embed/CHpcG1VSH0E" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
 
 But first, we need to understand today's graphics hardware. Today, we use GPUs, which stands for Graphics Processing Units. These are specialized processors designed for drawing graphics.
 ![](/images/game-engine-graphics/gpu-list.png)
