@@ -45,7 +45,7 @@ export function Block({
     offset: number
 }): JSX.Element {
     const { offset: parentOffset, sectionHeight } = useBlock();
-    const ref = useRef<GroupProps>();
+    const ref = useRef<React.ReactNode & GroupProps>();
     offset = offset !== undefined ? offset : parentOffset;
     useFrame(() => {
         if (!ref.current?.position)

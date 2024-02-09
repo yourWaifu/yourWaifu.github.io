@@ -48,7 +48,7 @@ function Sig({
             fadeTransitionRef.current();
     }, [])
 
-    const group = useRef<GroupProps>();
+    const group = useRef<React.ReactNode & GroupProps>();
     const gltf = useLoader(GLTFLoader, '/sig.glb');
     const material = new THREE.MeshBasicMaterial({ color: (new THREE.Color('white')).setScalar(5) });
 
@@ -99,7 +99,7 @@ function Sig({
 }
 
 function Cup({}): JSX.Element {
-    const group = useRef<GroupProps>();
+    const group = useRef<React.ReactNode & GroupProps>();
     const gltf = useLoader(GLTFLoader, '/cup.glb');
 
     const mesh = (gltf.nodes.cup as THREE.Mesh);
@@ -143,7 +143,7 @@ function Cup({}): JSX.Element {
 }
 
 function Keyboard({}): JSX.Element {
-    const group = useRef<GroupProps>(null!);
+    const group = useRef<ReactNode & GroupProps>(null!);
     const gltf = useGLTF('/keyboard.glb');
 
     const mesh = (gltf.nodes.keyboard as THREE.Mesh);
@@ -186,8 +186,8 @@ function CPU({
 }:{
     mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>
 }): JSX.Element {
-    const group = useRef<THREE.Group>();
-    const light = useRef<THREE.Group>();
+    const group = useRef<ReactNode & THREE.Group>();
+    const light = useRef<ReactNode & THREE.Group>();
     const { nodes, materials } = useLoader(GLTFLoader, '/cpu.glb');
 
     const baseRotation = new THREE.Euler(-2.9755246, 0.127342, -1.2194912);
@@ -295,7 +295,7 @@ type HtmlRef = {
 
 function Html(props: HtmlProps): JSX.Element {
     const root = React.useRef<ReactDOM.Root>();
-    const group = useRef<GroupProps>(null!);
+    const group = useRef<ReactNode & GroupProps>(null!);
     const camera = useThree(state => state.camera);
     const [page] = React.useState(() => document.createElement('div'));
     const gl = useThree(({ gl }) => gl);
