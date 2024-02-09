@@ -536,7 +536,7 @@ function Portfolio({removeMargins}: {removeMargins?: boolean}): JSX.Element {
     return <>
         <h2 style={style}><a href="https://yourwaifu.dev/sleepy-discord/">C++ Library for Discord</a></h2>
         Sleepy Discord <br />
-        <h2><a href="https://www.heavyeyedgames.com/">Custom Game Engine</a></h2>
+        <h2><a href="/posts/my-game-engine">Custom Game Engine</a></h2>
         <div>
             {/**Floatin element to keep the text from overlapping with the cup */}
             <div style={{float: "right", width: "25%", height:"2.5em"}}></div>
