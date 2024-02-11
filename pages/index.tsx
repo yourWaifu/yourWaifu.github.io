@@ -1013,12 +1013,16 @@ export default function Home(props: HomeProps) {
         <FadeStaticContent {...staticContentProps} />
     ;
 
+    const style: React.CSSProperties = canUseWebGL ? {
+        width: "100vw", height: "100vh", position: "fixed"
+    } : {};
+
     //create a fixed position to prevent overflow
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
         </Head>
-        <div style={{width: "100vw", height: "100vh", position: "fixed"}}>
+        <div style={style}>
             {canUseWebGL &&  <ThreeDeHome {...props}/>}
             {errorContent}
         </div>
