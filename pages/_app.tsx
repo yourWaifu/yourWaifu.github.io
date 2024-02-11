@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app'
 import './styles.css'
+import "../public/style.css";
 import Router from 'next/router'
 import { fadeOut } from '../lib/fade-out'
 
