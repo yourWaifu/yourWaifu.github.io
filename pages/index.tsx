@@ -952,7 +952,7 @@ function StaticContent(props: StaticContentProps) {
         <ContactInfo />
         <h2>Articles</h2>
         <ArticlesList allPostsData={props.allPostsData} LinkComponent={(props) => {
-            return <Link href={props.href}>{props.children}</Link>
+            return <Link prefetch={false} href={props.href}>{props.children}</Link>
         }} />
         <div style={{height: "1em"}} />
     </div>;
