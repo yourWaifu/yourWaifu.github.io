@@ -39,14 +39,10 @@ interface MouseOverData {x: number, y: number, halfW: number, halfH: number, ava
 interface GyroData {beta: number, gamma: number, available?: boolean, center: { beta: number, gamma: number } }
 
 function Sig({
-    mouse, gyro, fadeTransitionRef
+    mouse, gyro
 }:{
-    mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>, fadeTransitionRef: React.MutableRefObject<FadeTransition>
+    mouse:MutableRefObject<MouseOverData>, gyro:MutableRefObject<GyroData>
 }): JSX.Element {
-    useEffect(() => {
-        if (fadeTransitionRef.current)
-            fadeTransitionRef.current();
-    }, [])
 
     const group = useRef<React.ReactNode & GroupProps>();
     const gltf = useLoader(GLTFLoader, '/sig.glb');
@@ -438,14 +434,20 @@ function useJumpLinks(scroll: ScrollHandler) {
 }
 
 function FrontContent({
-    backButtonRef, scroll
+    backButtonRef, scroll, fadeTransitionRef
 }:{
     backButtonRef: React.MutableRefObject<HTMLDivElement>,
-    scroll: ScrollHandler
+    scroll: ScrollHandler,
+    fadeTransitionRef: React.MutableRefObject<FadeTransition>
 }): JSX.Element {
     const JumpLink = useJumpLinks(scroll);
     const camera = useThree(state => state.camera);
     const positionZ = baseCameraZ - viewDistance;
+
+    useEffect(() => {
+        if (fadeTransitionRef?.current)
+            fadeTransitionRef.current();
+    }, []);
 
     useFrame(() => {
         if (!backButtonRef?.current)
@@ -887,8 +889,8 @@ function ThreeDeHome({
             >
                 <ambientLight intensity={0.5} />
 
-                <Suspense fallback={loadingElement}>
-                    <Sig mouse={mouse} gyro={gyro} fadeTransitionRef={fadeTransitionRef} />
+                <Suspense fallback={null}>
+                    <Sig mouse={mouse} gyro={gyro} />
                 </Suspense>
                 <Suspense fallback={null}>
                     <Cup />
@@ -900,22 +902,24 @@ function ThreeDeHome({
                     <Keyboard />
                 </Suspense>
 
-                <FrontContent backButtonRef={backButtonRef} scroll={scrollHandler} />
-                <PortfolioContent />
-                <ContactContent />
-                <Page positionZ={baseCameraZ - viewDistance - 2700}>
-                    <div style={{
-                        textShadow: "2px 2px 10px black",
-                        filter: "drop-shadow(2px 2px 1px black)",
-                        display: "flex",
-                        flexDirection: "column"
-                    }}>
-                        <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
-                            const forwardProps = { router, ...props };
-                            return <PageLink {...forwardProps} />
-                        }} />
-                    </div>
-                </Page>
+                <Suspense fallback={loadingElement}>
+                    <FrontContent backButtonRef={backButtonRef} scroll={scrollHandler} fadeTransitionRef={fadeTransitionRef} />
+                    <PortfolioContent />
+                    <ContactContent />
+                    <Page positionZ={baseCameraZ - viewDistance - 2700}>
+                        <div style={{
+                            textShadow: "2px 2px 10px black",
+                            filter: "drop-shadow(2px 2px 1px black)",
+                            display: "flex",
+                            flexDirection: "column"
+                        }}>
+                            <ArticlesList allPostsData={allPostsData} LinkComponent={(props) => {
+                                const forwardProps = { router, ...props };
+                                return <PageLink {...forwardProps} />
+                            }} />
+                        </div>
+                    </Page>
+                </Suspense>
 
                 <fog attach="fog" args={[backgroundColor, 600, 1000]} />
 
