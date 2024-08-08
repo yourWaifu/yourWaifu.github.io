@@ -1,7 +1,7 @@
 ---
 layout: article
 title: I made a 3D Website
-description:
+description: The techniques used to create a website with 3D PBR models and seamlessly include HTML as part of a 3D scene. Made using Next.js, React.js, and Three.js.
 author: Hao Qi Wu
 date: 2021-10-06T22:30:00
 ---

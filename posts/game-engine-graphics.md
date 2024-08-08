@@ -1,7 +1,7 @@
 ---
 layout: article
 title: Video Game Graphics - Make a Game Engine
-description:
+description: The basics of texture mapping and rendering a square with an animated texture. Written in Three.js.
 author: Hao Qi Wu
 date: 2021-11-29T22:30:00
 ---

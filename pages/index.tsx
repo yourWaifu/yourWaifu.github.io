@@ -25,8 +25,6 @@ const viewDistance = 500;
 const baseScale = 894.9274309237762;
 const minVFOV = 75;
 
-function floatingModel() {}
-
 function sineWave(time: number, amp: number, frequency: number, phase: number = 0) {
     return amp * Math.sin((frequency * time) + phase);
 }
@@ -1025,6 +1023,13 @@ export default function Home(props: HomeProps) {
     return <Layout key={"home"}>
         <Head>
             <title>Hao Qi Wu</title>
+            <meta
+                name="description"
+                content= {
+                    "The personal website of Hao Qi Wu, a C++ and JS programmer. " +
+                    "Listing his projects, contacts, and articles."
+                }
+            />
         </Head>
         <div style={style}>
             {canUseWebGL &&  <ThreeDeHome {...props}/>}

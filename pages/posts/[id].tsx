@@ -29,6 +29,7 @@ export default function Post(
       id: string
       title: string
       date: string
+      description: string
       content: MDXRemoteSerializeResult
     }
   }
@@ -37,6 +38,7 @@ export default function Post(
     <Layout key={postData.id}>
       <Head>
         <title>{postData.title}</title>
+        <meta name="description" content={postData.description} />
       </Head>
       <article className={openSans.className}>
         <section className="article-header">

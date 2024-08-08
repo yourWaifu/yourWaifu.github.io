@@ -1,7 +1,7 @@
 ---
 layout: article
 title: Making a Discord Bot for Nintendo 3DS
-description:
+description: Creating a Discord bot in C++ that runs on the Nintendo 3DS. Using WebSockets, TLS encryption to get messages from Discord and send messages to Discord. Using the Homebrew SDK to create Nintendo 3DS apps.
 author: Hao Qi Wu
 date: 2022-02-28T22:30:00
 ---

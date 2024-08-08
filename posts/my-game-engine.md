@@ -1,7 +1,7 @@
 ---
 layout: article
 title: My Custom Game Engine in C++ and JavaScript
-description:
+description: My journey of creating a game engine with online multiplayer, JavaScript for scripting, and real-time lighting.
 author: Hao Qi Wu
 date: 2022-05-25T22:30:00
 ---
